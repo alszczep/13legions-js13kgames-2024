@@ -1,0 +1,17 @@
+{
+  "name": "js13k",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "preview": "vite preview",
+    "start": "npm run dev"
+  },
+  "devDependencies": {
+    "terser": "5.31.3",
+    "typescript": "5.2.2",
+    "vite": "5.3.4",
+    "vite-plugin-minify": "1.5.2"
+  }
+}
