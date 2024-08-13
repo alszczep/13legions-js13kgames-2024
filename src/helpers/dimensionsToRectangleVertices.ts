@@ -14,8 +14,8 @@ export function dimensionsToRectangleVertices(
   const y2 = (y + h) / baseWithDefault.h;
 
   if (flipX) {
-    return new Float32Array([x2, y1, x1, y1, x2, y2, x2, y2, x1, y1, x1, y2]);
+    return [x2, y1, x1, y1, x2, y2, x2, y2, x1, y1, x1, y2];
   }
 
-  return new Float32Array([x1, y1, x2, y1, x1, y2, x1, y2, x2, y1, x2, y2]);
+  return [x1, y1, x2, y1, x1, y2, x1, y2, x2, y1, x2, y2];
 }

@@ -5,8 +5,7 @@ import spriteSheetDataJson from "./spriteSheetData.json";
 type SpriteKeys = keyof typeof spriteSheetDataJson.frames;
 type SpriteSheetData = {
   [key in SpriteKeys]: DimensionsAndCoordinates & {
-    texCoords: Float32Array;
-    texCoordsXFlipped: Float32Array;
+    texCoords: number[];
   };
 };
 
@@ -20,15 +19,9 @@ export const spriteSheetData = Object.entries(
     ...acc,
     [name]: {
       ...sprite.frame,
-      texCoords: new Float32Array(
-        dimensionsToRectangleVertices(sprite.frame, { base: spriteSheetSize })
-      ),
-      texCoordsXFlipped: new Float32Array(
-        dimensionsToRectangleVertices(sprite.frame, {
-          base: spriteSheetSize,
-          flipX: true,
-        })
-      ),
+      texCoords: dimensionsToRectangleVertices(sprite.frame, {
+        base: spriteSheetSize,
+      }),
     },
   }),
   {}

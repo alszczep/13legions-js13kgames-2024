@@ -1,9 +1,12 @@
+// find bugs in this code, now I can see only some line on the screen where the sprite should be
 import { loadSpriteSheet } from "./assets/loadSpriteSheet";
 import { getGl } from "./getGl";
 import { createProgram } from "./createProgram";
 import { glCreateTexture } from "./helpers/glCreateTexture";
 import { spriteSheetData } from "./assets/spriteSheetData";
 import { dimensionsToRectangleVertices } from "./helpers/dimensionsToRectangleVertices";
+import { FLOAT_SIZE_IN_BYTES, SPRITE_SIZE_MULTIPLIER } from "./consts";
+import { combinePositionAndTexCords } from "./helpers/combinePositionAndTexCords";
 
 async function main() {
   const spriteSheet = await loadSpriteSheet();
@@ -24,35 +27,34 @@ async function main() {
   const vao = gl.createVertexArray();
   gl.bindVertexArray(vao);
 
-  const positionBuffer = gl.createBuffer();
-  gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
+  const charactersBuffer = gl.createBuffer();
+  gl.bindBuffer(gl.ARRAY_BUFFER, charactersBuffer);
+
+  const offset = 4 * FLOAT_SIZE_IN_BYTES;
 
   gl.enableVertexAttribArray(positionAttributeLocation);
-  gl.vertexAttribPointer(positionAttributeLocation, 2, gl.FLOAT, false, 0, 0);
+  gl.vertexAttribPointer(
+    positionAttributeLocation,
+    2,
+    gl.FLOAT,
+    false,
+    offset,
+    0
+  );
+  gl.enableVertexAttribArray(texCoordAttributeLocation);
+  gl.vertexAttribPointer(
+    texCoordAttributeLocation,
+    2,
+    gl.FLOAT,
+    false,
+    offset,
+    2 * FLOAT_SIZE_IN_BYTES
+  );
 
-  // const positions = new Float32Array([
-  //   10, 20, 80, 20, 10, 30, 10, 30, 80, 20, 80, 30,
-  // ]);
-  // gl.bufferData(gl.ARRAY_BUFFER, positions, gl.STATIC_DRAW);
-
-  const texCoordBuffer = gl.createBuffer();
   const texCoordsCharacterStanding =
     spriteSheetData["character-2 0.aseprite"].texCoords;
   const texCoordsCharacterAttacking =
     spriteSheetData["character-2 1.aseprite"].texCoords;
-
-  gl.bindBuffer(gl.ARRAY_BUFFER, texCoordBuffer);
-  gl.bufferData(
-    gl.ARRAY_BUFFER,
-    new Float32Array([
-      ...texCoordsCharacterStanding,
-      ...texCoordsCharacterAttacking,
-    ]),
-    gl.STATIC_DRAW
-  );
-
-  gl.enableVertexAttribArray(texCoordAttributeLocation);
-  gl.vertexAttribPointer(texCoordAttributeLocation, 2, gl.FLOAT, false, 0, 0);
 
   const spriteSheetTexture = glCreateTexture(gl, spriteSheet);
 
@@ -89,13 +91,6 @@ async function main() {
     }
   });
 
-  const emptyPosition = {
-    x: 0,
-    y: 0,
-    w: 0,
-    h: 0,
-  };
-
   function drawScene() {
     gl.clearColor(0, 0, 0, 0);
     gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
@@ -107,39 +102,32 @@ async function main() {
     gl.uniform2f(resolutionUniformLocation, gl.canvas.width, gl.canvas.height);
     gl.uniform1i(imageUniformLocation, spriteSheetTexture.id);
 
-    gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
+    const playerCharacterPosition = dimensionsToRectangleVertices(
+      {
+        x: characterData.x,
+        y: characterData.y,
+        w: spriteSheetData["character-2 0.aseprite"].w * SPRITE_SIZE_MULTIPLIER,
+        h: spriteSheetData["character-2 0.aseprite"].h * SPRITE_SIZE_MULTIPLIER,
+      },
+      { flipX: characterData.facing === "left" }
+    );
+    const playerCharacterTexCoords = characterData.isAttacking
+      ? texCoordsCharacterAttacking
+      : texCoordsCharacterStanding;
 
-    const characterStanding = characterData.isAttacking
-      ? dimensionsToRectangleVertices(emptyPosition)
-      : dimensionsToRectangleVertices(
-          {
-            x: characterData.x,
-            y: characterData.y,
-            w: spriteSheetData["character-2 0.aseprite"].w * 2,
-            h: spriteSheetData["character-2 0.aseprite"].h * 2,
-          },
-          { flipX: characterData.facing === "left" }
-        );
-
-    const characterAttacking = characterData.isAttacking
-      ? dimensionsToRectangleVertices(
-          {
-            x: characterData.x,
-            y: characterData.y,
-            w: spriteSheetData["character-2 1.aseprite"].w * 2,
-            h: spriteSheetData["character-2 1.aseprite"].h * 2,
-          },
-          { flipX: characterData.facing === "left" }
-        )
-      : dimensionsToRectangleVertices(emptyPosition);
-
+    gl.bindBuffer(gl.ARRAY_BUFFER, charactersBuffer);
     gl.bufferData(
       gl.ARRAY_BUFFER,
-      new Float32Array([...characterStanding, ...characterAttacking]),
+      new Float32Array(
+        combinePositionAndTexCords(
+          playerCharacterPosition,
+          playerCharacterTexCoords
+        )
+      ),
       gl.DYNAMIC_DRAW
     );
 
-    gl.drawArrays(gl.TRIANGLES, 0, 2 * 6);
+    gl.drawArrays(gl.TRIANGLES, 0, 1 * 6);
 
     requestAnimationFrame(drawScene);
   }
