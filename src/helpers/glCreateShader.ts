@@ -12,7 +12,11 @@ export function glCreateShader(
     return shader;
   }
 
+  // TODO: comment before build
   console.log(gl.getShaderInfoLog(shader));
+
   gl.deleteShader(shader);
+
+  // TODO: comment before build
   throw new Error("Shader compile: " + type);
 }

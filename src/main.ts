@@ -1,4 +1,3 @@
-// find bugs in this code, now I can see only some line on the screen where the sprite should be
 import { loadSpriteSheet } from "./assets/loadSpriteSheet";
 import { getGl } from "./getGl";
 import { createProgram } from "./createProgram";
@@ -6,7 +5,8 @@ import { glCreateTexture } from "./helpers/glCreateTexture";
 import { spriteSheetData } from "./assets/spriteSheetData";
 import { dimensionsToRectangleVertices } from "./helpers/dimensionsToRectangleVertices";
 import { FLOAT_SIZE_IN_BYTES, SPRITE_SIZE_MULTIPLIER } from "./consts";
-import { combinePositionAndTexCords } from "./helpers/combinePositionAndTexCords";
+import { combineVertexAttributeValues } from "./helpers/combinePositionAndTexCords";
+import { colorIdFor6Vertices, FragmentShaderColorsIds } from "./colors";
 
 async function main() {
   const spriteSheet = await loadSpriteSheet();
@@ -17,6 +17,10 @@ async function main() {
 
   const positionAttributeLocation = gl.getAttribLocation(program, "a_position");
   const texCoordAttributeLocation = gl.getAttribLocation(program, "a_texCoord");
+  const colorToOffsetGrayIdAttributeLocation = gl.getAttribLocation(
+    program,
+    "a_colorToOffsetGrayId"
+  );
 
   const resolutionUniformLocation = gl.getUniformLocation(
     program,
@@ -30,7 +34,7 @@ async function main() {
   const charactersBuffer = gl.createBuffer();
   gl.bindBuffer(gl.ARRAY_BUFFER, charactersBuffer);
 
-  const offset = 4 * FLOAT_SIZE_IN_BYTES;
+  const stride = 5 * FLOAT_SIZE_IN_BYTES;
 
   gl.enableVertexAttribArray(positionAttributeLocation);
   gl.vertexAttribPointer(
@@ -38,7 +42,7 @@ async function main() {
     2,
     gl.FLOAT,
     false,
-    offset,
+    stride,
     0
   );
   gl.enableVertexAttribArray(texCoordAttributeLocation);
@@ -47,8 +51,17 @@ async function main() {
     2,
     gl.FLOAT,
     false,
-    offset,
+    stride,
     2 * FLOAT_SIZE_IN_BYTES
+  );
+  gl.enableVertexAttribArray(colorToOffsetGrayIdAttributeLocation);
+  gl.vertexAttribPointer(
+    colorToOffsetGrayIdAttributeLocation,
+    1,
+    gl.FLOAT,
+    false,
+    stride,
+    4 * FLOAT_SIZE_IN_BYTES
   );
 
   const texCoordsCharacterStanding =
@@ -65,28 +78,40 @@ async function main() {
     y: 0,
     facing: "right",
     isAttacking: false,
+    swordColor: FragmentShaderColorsIds.Red,
   };
   window.addEventListener("keydown", (e) => {
-    if (e.key === "d") {
-      characterData.x += 5;
-      characterData.facing = "right";
-    }
-    if (e.key === "a") {
-      characterData.x -= 5;
-      characterData.facing = "left";
-    }
-    if (e.key === "w") {
-      characterData.y -= 5;
-    }
-    if (e.key === "s") {
-      characterData.y += 5;
-    }
-    if (e.key === "j") {
-      characterData.isAttacking = true;
+    switch (e.key) {
+      case "d":
+        characterData.x += 5;
+        characterData.facing = "right";
+        break;
+      case "a":
+        characterData.x -= 5;
+        characterData.facing = "left";
+        break;
+      case "w":
+        characterData.y -= 5;
+        break;
+      case "s":
+        characterData.y += 5;
+        break;
+      case "j":
+        characterData.isAttacking = true;
+        characterData.swordColor = FragmentShaderColorsIds.Red;
+        break;
+      case "k":
+        characterData.isAttacking = true;
+        characterData.swordColor = FragmentShaderColorsIds.Green;
+        break;
+      case "l":
+        characterData.isAttacking = true;
+        characterData.swordColor = FragmentShaderColorsIds.Blue;
+        break;
     }
   });
   window.addEventListener("keyup", (e) => {
-    if (e.key === "j") {
+    if (["j", "k", "l"].includes(e.key)) {
       characterData.isAttacking = false;
     }
   });
@@ -119,10 +144,14 @@ async function main() {
     gl.bufferData(
       gl.ARRAY_BUFFER,
       new Float32Array(
-        combinePositionAndTexCords(
-          playerCharacterPosition,
-          playerCharacterTexCoords
-        )
+        combineVertexAttributeValues({
+          elementsPerVertex: [2, 2, 1],
+          values: [
+            playerCharacterPosition,
+            playerCharacterTexCoords,
+            colorIdFor6Vertices(characterData.swordColor),
+          ],
+        })
       ),
       gl.DYNAMIC_DRAW
     );

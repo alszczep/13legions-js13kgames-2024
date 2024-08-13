@@ -12,7 +12,11 @@ export function glCreateProgram(
     return program;
   }
 
+  // TODO: comment before build
   console.log(gl.getProgramInfoLog(program));
+
   gl.deleteProgram(program);
+
+  // TODO: comment before build
   throw new Error("Program create");
 }
