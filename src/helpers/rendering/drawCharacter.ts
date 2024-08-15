@@ -1,12 +1,12 @@
-import { SPRITE_SIZE_MULTIPLIER } from "../consts";
-import { DimensionsAndCoordinates } from "../types/DimensionsAndCoordinates";
+import { SPRITE_SIZE_MULTIPLIER } from "../../consts";
+import { DimensionsAndCoordinates } from "../../types/DimensionsAndCoordinates";
 import { combineVertexAttributeValues } from "./combinePositionAndTexCords";
 import { dimensionsToRectangleVertices } from "./dimensionsToRectangleVertices";
 
 export function drawCharacter(
   gl: WebGL2RenderingContext,
   grayOffsetColorUniformLocation: WebGLUniformLocation,
-  charactersBuffer: WebGLBuffer,
+  characterBuffer: WebGLBuffer,
   {
     x,
     y,
@@ -36,7 +36,7 @@ export function drawCharacter(
     { flipX }
   );
 
-  gl.bindBuffer(gl.ARRAY_BUFFER, charactersBuffer);
+  gl.bindBuffer(gl.ARRAY_BUFFER, characterBuffer);
   gl.bufferData(
     gl.ARRAY_BUFFER,
     new Float32Array(

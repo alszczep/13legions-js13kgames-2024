@@ -1,58 +1,37 @@
 import { loadSpriteSheet } from "./assets/loadSpriteSheet";
-import { getGl } from "./getGl";
-import { createProgram } from "./createProgram";
-import { glCreateTexture } from "./helpers/glCreateTexture";
+import { getGl } from "./helpers/rendering/getGl";
+
+import { glCreateTexture } from "./helpers/rendering/gl/glCreateTexture";
 import { spriteSheetData } from "./assets/spriteSheetData";
-import { FLOAT_SIZE_IN_BYTES } from "./consts";
 import { colorKeys, colorVectors } from "./colors";
-import { drawCharacter } from "./helpers/drawCharacter";
+import {
+  characterShaderUniforms,
+  createCharacterProgram,
+} from "./shaders/character.createProgram";
+import {
+  createTerrainProgram,
+  terrainShaderUniforms,
+} from "./shaders/terrain.createProgram";
+import { drawCharacter } from "./helpers/rendering/drawCharacter";
+import { dimensionsToRectangleVertices } from "./helpers/rendering/dimensionsToRectangleVertices";
 
 async function main() {
   const spriteSheet = await loadSpriteSheet();
 
   const gl = getGl();
 
-  const program = createProgram(gl);
-
-  const positionAttributeLocation = gl.getAttribLocation(program, "a_position");
-  const texCoordAttributeLocation = gl.getAttribLocation(program, "a_texCoord");
-
-  const resolutionUniformLocation = gl.getUniformLocation(
-    program,
-    "u_resolution"
-  )!;
-  const imageUniformLocation = gl.getUniformLocation(program, "u_image")!;
-  const grayOffsetColorUniformLocation = gl.getUniformLocation(
-    program,
-    "u_grayOffsetColor"
-  )!;
-
-  const vao = gl.createVertexArray();
-  gl.bindVertexArray(vao);
-
-  const charactersBuffer = gl.createBuffer()!;
-  gl.bindBuffer(gl.ARRAY_BUFFER, charactersBuffer);
-
-  const stride = 4 * FLOAT_SIZE_IN_BYTES;
-
-  gl.enableVertexAttribArray(positionAttributeLocation);
-  gl.vertexAttribPointer(
-    positionAttributeLocation,
-    2,
-    gl.FLOAT,
-    false,
-    stride,
-    0
-  );
-  gl.enableVertexAttribArray(texCoordAttributeLocation);
-  gl.vertexAttribPointer(
-    texCoordAttributeLocation,
-    2,
-    gl.FLOAT,
-    false,
-    stride,
-    2 * FLOAT_SIZE_IN_BYTES
-  );
+  const {
+    terrainVao,
+    terrainProgram,
+    terrainBuffer,
+    terrainProgramUniformsLocations,
+  } = createTerrainProgram(gl);
+  const {
+    characterVao,
+    characterProgram,
+    characterBuffer,
+    characterProgramUniformsLocations,
+  } = createCharacterProgram(gl);
 
   const texCoordsCharacterStanding =
     spriteSheetData["character-2 0.aseprite"].texCoords;
@@ -106,47 +85,130 @@ async function main() {
     }
   });
 
-  gl.useProgram(program);
+  // gl.bindVertexArray(vao);
 
-  gl.bindVertexArray(vao);
+  gl.bindVertexArray(terrainVao);
+  gl.useProgram(terrainProgram);
+  gl.uniform2f(
+    terrainProgramUniformsLocations[terrainShaderUniforms.u_resolution],
+    gl.canvas.width,
+    gl.canvas.height
+  );
 
-  gl.uniform2f(resolutionUniformLocation, gl.canvas.width, gl.canvas.height);
-  gl.uniform1i(imageUniformLocation, spriteSheetTexture.id);
+  gl.bindVertexArray(characterVao);
+  gl.useProgram(characterProgram);
+  gl.uniform2f(
+    characterProgramUniformsLocations[characterShaderUniforms.u_resolution],
+    gl.canvas.width,
+    gl.canvas.height
+  );
+  gl.uniform1i(
+    characterProgramUniformsLocations[characterShaderUniforms.u_image],
+    spriteSheetTexture.id
+  );
 
   function drawScene() {
     // gl.clearColor(0, 0, 0, 0);
     // gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
 
-    const playerCharacterTexCoords = characterData.isAttacking
-      ? texCoordsCharacterAttacking
-      : texCoordsCharacterStanding;
+    gl.bindVertexArray(terrainVao);
+    gl.useProgram(terrainProgram);
 
-    drawCharacter(gl, grayOffsetColorUniformLocation, charactersBuffer, {
-      x: characterData.x,
-      y: characterData.y,
-      w: spriteSheetData["character-2 0.aseprite"].w,
-      h: spriteSheetData["character-2 0.aseprite"].h,
-      grayOffsetColor: colorVectors[characterData.swordColor],
-      texCoords: playerCharacterTexCoords,
-      flipX: characterData.facing === "left",
-    });
+    gl.uniform3fv(
+      terrainProgramUniformsLocations[terrainShaderUniforms.u_color],
+      colorVectors.sky
+    );
+    gl.bindBuffer(gl.ARRAY_BUFFER, terrainBuffer);
+    gl.bufferData(
+      gl.ARRAY_BUFFER,
+      new Float32Array(
+        dimensionsToRectangleVertices({
+          x: 0,
+          y: 0,
+          w: gl.canvas.width,
+          h: gl.canvas.height,
+        })
+      ),
+      gl.STATIC_DRAW
+    );
 
-    drawCharacter(gl, grayOffsetColorUniformLocation, charactersBuffer, {
-      x: 200,
-      y: 0,
-      w: spriteSheetData["enemy-knight 0.aseprite"].w,
-      h: spriteSheetData["enemy-knight 0.aseprite"].h,
-      grayOffsetColor: colorVectors.yellow,
-      texCoords: spriteSheetData["enemy-knight 0.aseprite"].texCoords,
-    });
-    drawCharacter(gl, grayOffsetColorUniformLocation, charactersBuffer, {
-      x: 400,
-      y: 0,
-      w: spriteSheetData["enemy-knight 1.aseprite"].w,
-      h: spriteSheetData["enemy-knight 1.aseprite"].h,
-      grayOffsetColor: colorVectors.blue,
-      texCoords: spriteSheetData["enemy-knight 1.aseprite"].texCoords,
-    });
+    gl.drawArrays(gl.TRIANGLES, 0, 1 * 6);
+
+    gl.uniform3fv(
+      terrainProgramUniformsLocations[terrainShaderUniforms.u_color],
+      colorVectors.ground
+    );
+    gl.bindBuffer(gl.ARRAY_BUFFER, terrainBuffer);
+    gl.bufferData(
+      gl.ARRAY_BUFFER,
+      new Float32Array(
+        dimensionsToRectangleVertices({
+          x: 0,
+          y: gl.canvas.height - 100,
+          w: gl.canvas.width,
+          h: 100,
+        })
+      ),
+      gl.STATIC_DRAW
+    );
+
+    gl.drawArrays(gl.TRIANGLES, 0, 1 * 6);
+
+    gl.bindVertexArray(characterVao);
+    gl.useProgram(characterProgram);
+    // gl.uniform2f(
+    //   characterProgramUniformsLocations[characterShaderUniforms.u_resolution],
+    //   gl.canvas.width,
+    //   gl.canvas.height
+    // );
+    // gl.uniform1i(
+    //   characterProgramUniformsLocations[characterShaderUniforms.u_image],
+    //   spriteSheetTexture.id
+    // );
+
+    drawCharacter(
+      gl,
+      characterProgramUniformsLocations[characterShaderUniforms.u_color],
+      characterBuffer,
+      {
+        x: characterData.x,
+        y: characterData.y,
+        w: spriteSheetData["character-2 0.aseprite"].w,
+        h: spriteSheetData["character-2 0.aseprite"].h,
+        grayOffsetColor: colorVectors[characterData.swordColor],
+        texCoords: characterData.isAttacking
+          ? texCoordsCharacterAttacking
+          : texCoordsCharacterStanding,
+        flipX: characterData.facing === "left",
+      }
+    );
+
+    drawCharacter(
+      gl,
+      characterProgramUniformsLocations[characterShaderUniforms.u_color],
+      characterBuffer,
+      {
+        x: 200,
+        y: 0,
+        w: spriteSheetData["enemy-knight 0.aseprite"].w,
+        h: spriteSheetData["enemy-knight 0.aseprite"].h,
+        grayOffsetColor: colorVectors.yellow,
+        texCoords: spriteSheetData["enemy-knight 0.aseprite"].texCoords,
+      }
+    );
+    drawCharacter(
+      gl,
+      characterProgramUniformsLocations[characterShaderUniforms.u_color],
+      characterBuffer,
+      {
+        x: 400,
+        y: 0,
+        w: spriteSheetData["enemy-knight 1.aseprite"].w,
+        h: spriteSheetData["enemy-knight 1.aseprite"].h,
+        grayOffsetColor: colorVectors.blue,
+        texCoords: spriteSheetData["enemy-knight 1.aseprite"].texCoords,
+      }
+    );
 
     requestAnimationFrame(drawScene);
   }

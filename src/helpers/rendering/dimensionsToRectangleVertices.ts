@@ -1,7 +1,7 @@
 import {
   DimensionsAndCoordinates,
   Dimensions,
-} from "../types/DimensionsAndCoordinates";
+} from "../../types/DimensionsAndCoordinates";
 
 export function dimensionsToRectangleVertices(
   { x, y, w, h }: DimensionsAndCoordinates,

@@ -1,4 +1,4 @@
-import { dimensionsToRectangleVertices } from "../helpers/dimensionsToRectangleVertices";
+import { dimensionsToRectangleVertices } from "../helpers/rendering/dimensionsToRectangleVertices";
 import { DimensionsAndCoordinates } from "../types/DimensionsAndCoordinates";
 import spriteSheetDataJson from "./spriteSheetData.json";
 
