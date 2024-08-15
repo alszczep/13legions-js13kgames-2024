@@ -1,9 +1,15 @@
-export enum FragmentShaderColorsIds {
-  Red = 1,
-  Green = 2,
-  Blue = 3,
-}
+export const colorKeys = {
+  red: "red",
+  yellow: "yellow",
+  blue: "blue",
+} as const;
 
-export function colorIdFor6Vertices(colorId: FragmentShaderColorsIds) {
-  return [colorId, colorId, colorId, colorId, colorId, colorId];
-}
+type ColorVectors = {
+  [key in keyof typeof colorKeys]: [number, number, number];
+};
+
+export const colorVectors: ColorVectors = {
+  [colorKeys.red]: [1, 0, 0],
+  [colorKeys.yellow]: [1, 1, 0],
+  [colorKeys.blue]: [0, 0, 1],
+};
