@@ -10,18 +10,26 @@ import { Terrain } from "./Terrain";
 type Hitboxes = {
   character: DimensionsAndCoordinates;
   sword: DimensionsAndCoordinates;
+  feet: DimensionsAndCoordinates;
 };
 
 export class Player extends Character {
   swordColor: BaseColors = "red";
-  isAttackButtonPressed: boolean = false;
-  attackTimeLeft?: number = undefined;
-  isMoving: boolean = false;
-  movingTimeLeft?: number = undefined;
 
-  walkingSpeedMultiplier = 0.25;
-  attackTimeInMs = 200;
-  moveTimePerClickInMs = 25;
+  _isAttackButtonPressed: boolean = false;
+  _attackTimeLeftInMs?: number = undefined;
+
+  _isMoving: boolean = false;
+  _movingTimeLeftInMs?: number = undefined;
+
+  _isMovingVertically?: "up" | "down" = undefined;
+  _jumpUpTimeLeftInMs?: number = undefined;
+
+  _walkingSpeedMultiplier = 0.25;
+  _attackTimeInMs = 200;
+  _moveTimePerClickInMs = 25;
+  _jumpUpTimeInMs = 225;
+  _jumpSpeedMultiplier = 0.75;
 
   rightFacingHitboxes: Hitboxes = {
     character: {
@@ -35,6 +43,12 @@ export class Player extends Character {
       y: 2 * SPRITE_SIZE_MULTIPLIER,
       w: 13 * SPRITE_SIZE_MULTIPLIER,
       h: 14 * SPRITE_SIZE_MULTIPLIER,
+    },
+    feet: {
+      x: 13 * SPRITE_SIZE_MULTIPLIER,
+      y: 14 * SPRITE_SIZE_MULTIPLIER,
+      w: 8 * SPRITE_SIZE_MULTIPLIER,
+      h: 2 * SPRITE_SIZE_MULTIPLIER,
     },
   };
   leftFacingHitboxes: Hitboxes = {} as Hitboxes;
@@ -61,6 +75,12 @@ export class Player extends Character {
           this.spriteStanding.w -
           (this.rightFacingHitboxes.sword.x + this.rightFacingHitboxes.sword.w),
       },
+      feet: {
+        ...this.rightFacingHitboxes.feet,
+        x:
+          this.spriteStanding.w -
+          (this.rightFacingHitboxes.feet.x + this.rightFacingHitboxes.feet.w),
+      },
     };
 
     this._createEventListeners();
@@ -69,17 +89,17 @@ export class Player extends Character {
   private _createEventListeners() {
     const move = (direction: "left" | "right") => {
       this._facing = direction;
-      this.isMoving = true;
-      this.movingTimeLeft = this.moveTimePerClickInMs;
+      this._isMoving = true;
+      this._movingTimeLeftInMs = this._moveTimePerClickInMs;
     };
 
     const attack = (color: BaseColors) => {
-      if (this.attackTimeLeft !== undefined || this.isAttackButtonPressed)
+      if (this._attackTimeLeftInMs !== undefined || this._isAttackButtonPressed)
         return;
 
       this.swordColor = color;
-      this.attackTimeLeft = this.attackTimeInMs;
-      this.isAttackButtonPressed = true;
+      this._attackTimeLeftInMs = this._attackTimeInMs;
+      this._isAttackButtonPressed = true;
     };
 
     window.addEventListener("keydown", (e) => {
@@ -99,40 +119,45 @@ export class Player extends Character {
         case "l":
           attack("blue");
           break;
+        case " ":
+        case "w":
+          if (this._isMovingVertically) return;
+          this._isMovingVertically = "up";
+          this._jumpUpTimeLeftInMs = this._jumpUpTimeInMs;
       }
     });
     window.addEventListener("keyup", (e) => {
       switch (e.key) {
         case "d":
-          if (this.isMoving && this._facing === "right") {
-            this.isMoving = false;
+          if (this._isMoving && this._facing === "right") {
+            this._isMoving = false;
           }
           break;
         case "a":
-          if (this.isMoving && this._facing === "left") {
-            this.isMoving = false;
+          if (this._isMoving && this._facing === "left") {
+            this._isMoving = false;
           }
           break;
         case "j":
           if (this.swordColor === colorKeys.red) {
-            this.isAttackButtonPressed = false;
+            this._isAttackButtonPressed = false;
           }
           break;
         case "k":
           if (this.swordColor === colorKeys.yellow) {
-            this.isAttackButtonPressed = false;
+            this._isAttackButtonPressed = false;
           }
           break;
         case "l":
           if (this.swordColor === colorKeys.blue) {
-            this.isAttackButtonPressed = false;
+            this._isAttackButtonPressed = false;
           }
           break;
       }
     });
   }
 
-  getHitboxesOnScene(facing: LeftRight) {
+  getHitboxesOnScene(facing: LeftRight): Hitboxes {
     if (facing === "right") {
       return {
         character: {
@@ -149,6 +174,12 @@ export class Player extends Character {
           y: this.y - this.spriteAttacking.h + this.rightFacingHitboxes.sword.y,
           w: this.rightFacingHitboxes.sword.w,
           h: this.rightFacingHitboxes.sword.h,
+        },
+        feet: {
+          x: this.x + this.rightFacingHitboxes.feet.x,
+          y: this.y - this.spriteAttacking.h + this.rightFacingHitboxes.feet.y,
+          w: this.rightFacingHitboxes.feet.w,
+          h: this.rightFacingHitboxes.feet.h,
         },
       };
     }
@@ -167,17 +198,55 @@ export class Player extends Character {
         w: this.leftFacingHitboxes.sword.w,
         h: this.leftFacingHitboxes.sword.h,
       },
+      feet: {
+        x: this.x + this.leftFacingHitboxes.feet.x,
+        y: this.y - this.spriteAttacking.h + this.leftFacingHitboxes.feet.y,
+        w: this.leftFacingHitboxes.feet.w,
+        h: this.leftFacingHitboxes.feet.h,
+      },
     };
   }
 
   handleFrame(deltaTime: number, terrain: Terrain): void {
     const hitboxes = this.getHitboxesOnScene(this._facing);
 
-    if (
-      this.movingTimeLeft !== undefined &&
-      this.attackTimeLeft === undefined
-    ) {
-      const moveDistance = deltaTime * this.walkingSpeedMultiplier;
+    if (this._isMovingVertically) {
+      const moveDistance = deltaTime * this._jumpSpeedMultiplier;
+      if (this._isMovingVertically === "up") {
+        this.y -= moveDistance;
+      }
+      if (this._isMovingVertically === "down") {
+        const groundInReach = terrain.groundRectangles.find((r) => {
+          const horizontal =
+            r.x < hitboxes.feet.x + hitboxes.feet.w &&
+            r.x + r.w > hitboxes.feet.x;
+          const vertical =
+            hitboxes.feet.y + hitboxes.feet.h < r.y &&
+            hitboxes.feet.y + hitboxes.feet.h + moveDistance >= r.y;
+
+          return horizontal && vertical;
+        });
+
+        if (groundInReach) {
+          this.y = groundInReach.y;
+          this._isMovingVertically = undefined;
+        } else {
+          this.y += moveDistance;
+        }
+      }
+
+      if (this._jumpUpTimeLeftInMs !== undefined) {
+        if (this._jumpUpTimeLeftInMs <= 0) {
+          this._isMovingVertically = "down";
+          this._jumpUpTimeLeftInMs = undefined;
+        } else {
+          this._jumpUpTimeLeftInMs -= deltaTime;
+        }
+      }
+    }
+
+    if (this._movingTimeLeftInMs !== undefined) {
+      const moveDistance = deltaTime * this._walkingSpeedMultiplier;
       if (
         this._facing === "right" &&
         hitboxes.character.x + hitboxes.character.w < terrain.skyRectangle.w
@@ -191,29 +260,46 @@ export class Player extends Character {
         this.x -= moveDistance;
       }
 
-      this.movingTimeLeft -= deltaTime;
+      if (this._isMovingVertically === undefined) {
+        const updatedHitboxes = this.getHitboxesOnScene(this._facing);
+        const groundInReach = terrain.groundRectangles.find((r) => {
+          const horizontal =
+            r.x < updatedHitboxes.feet.x + updatedHitboxes.feet.w &&
+            r.x + r.w > updatedHitboxes.feet.x;
+          const vertical =
+            updatedHitboxes.feet.y + updatedHitboxes.feet.h === r.y;
 
-      if (this.movingTimeLeft <= 0) {
-        if (this.isMoving) {
-          this.movingTimeLeft = this.moveTimePerClickInMs;
+          return horizontal && vertical;
+        });
+
+        if (!groundInReach) {
+          this._isMovingVertically = "down";
+        }
+      }
+
+      this._movingTimeLeftInMs -= deltaTime;
+
+      if (this._movingTimeLeftInMs <= 0) {
+        if (this._isMoving) {
+          this._movingTimeLeftInMs = this._moveTimePerClickInMs;
         } else {
-          this.movingTimeLeft = undefined;
+          this._movingTimeLeftInMs = undefined;
         }
       }
     }
 
-    if (this.attackTimeLeft !== undefined) {
-      this.attackTimeLeft -= deltaTime;
+    if (this._attackTimeLeftInMs !== undefined) {
+      this._attackTimeLeftInMs -= deltaTime;
 
-      if (this.attackTimeLeft <= 0) {
-        this.attackTimeLeft = undefined;
+      if (this._attackTimeLeftInMs <= 0) {
+        this._attackTimeLeftInMs = undefined;
       }
     }
   }
 
   getDrawData(): DrawCharacterParams {
     const sprite =
-      this.attackTimeLeft !== undefined
+      this._attackTimeLeftInMs !== undefined
         ? this.spriteAttacking
         : this.spriteStanding;
 
