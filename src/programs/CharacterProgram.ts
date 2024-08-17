@@ -15,6 +15,12 @@ type Attributes =
 type Uniforms =
   (typeof characterShaderUniforms)[keyof typeof characterShaderUniforms];
 
+export type DrawCharacterParams = {
+  texCoords: number[];
+  grayOffsetColor: [number, number, number];
+  flipX?: boolean;
+} & DimensionsAndCoordinates;
+
 export class CharacterProgram extends Program<Attributes, Uniforms> {
   constructor(gl: WebGL2RenderingContext) {
     super(gl, characterVertexShader, characterFragmentShader);
@@ -56,11 +62,7 @@ export class CharacterProgram extends Program<Attributes, Uniforms> {
     texCoords,
     grayOffsetColor,
     flipX,
-  }: {
-    texCoords: number[];
-    grayOffsetColor: [number, number, number];
-    flipX?: boolean;
-  } & DimensionsAndCoordinates) {
+  }: DrawCharacterParams) {
     this.gl.uniform3fv(
       this.uniformsLocations.u_color,
       new Float32Array(grayOffsetColor)

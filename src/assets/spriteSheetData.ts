@@ -3,10 +3,11 @@ import { DimensionsAndCoordinates } from "../types/DimensionsAndCoordinates";
 import spriteSheetDataJson from "./spriteSheetData.json";
 
 type SpriteKeys = keyof typeof spriteSheetDataJson.frames;
+export type SpriteData = DimensionsAndCoordinates & {
+  texCoords: number[];
+};
 type SpriteSheetData = {
-  [key in SpriteKeys]: DimensionsAndCoordinates & {
-    texCoords: number[];
-  };
+  [key in SpriteKeys]: SpriteData;
 };
 
 const spriteSheetSize = spriteSheetDataJson.meta.size;
