@@ -1,7 +1,16 @@
 import { spriteSheetData } from "../assets/spriteSheetData";
 import { BaseColors, colorKeys, colorVectors } from "../colors";
+import { SPRITE_SIZE_MULTIPLIER } from "../consts";
 import { DrawCharacterParams } from "../programs/CharacterProgram";
+import { DimensionsAndCoordinates } from "../types/DimensionsAndCoordinates";
+import { LeftRight } from "../types/LeftRight";
 import { Character } from "./Character";
+import { Terrain } from "./Terrain";
+
+type Hitboxes = {
+  character: DimensionsAndCoordinates;
+  sword: DimensionsAndCoordinates;
+};
 
 export class Player extends Character {
   swordColor: BaseColors = "red";
@@ -14,6 +23,22 @@ export class Player extends Character {
   attackTimeInMs = 200;
   moveTimePerClickInMs = 25;
 
+  rightFacingHitboxes: Hitboxes = {
+    character: {
+      x: 10,
+      y: 0,
+      w: 11,
+      h: 16,
+    },
+    sword: {
+      x: 19,
+      y: 2,
+      w: 13,
+      h: 14,
+    },
+  };
+  leftFacingHitboxes: Hitboxes = {} as Hitboxes;
+
   constructor(x: number, y: number) {
     super(
       spriteSheetData["character-2 0.aseprite"],
@@ -22,10 +47,26 @@ export class Player extends Character {
       y
     );
 
-    this.createEventListeners();
+    this.leftFacingHitboxes = {
+      character: {
+        ...this.rightFacingHitboxes.character,
+        x:
+          this.spriteStanding.w -
+          (this.rightFacingHitboxes.character.x +
+            this.rightFacingHitboxes.character.w),
+      },
+      sword: {
+        ...this.rightFacingHitboxes.sword,
+        x:
+          this.spriteStanding.w -
+          (this.rightFacingHitboxes.sword.x + this.rightFacingHitboxes.sword.w),
+      },
+    };
+
+    this._createEventListeners();
   }
 
-  private createEventListeners() {
+  private _createEventListeners() {
     const move = (direction: "left" | "right") => {
       this._facing = direction;
       this.isMoving = true;
@@ -91,12 +132,73 @@ export class Player extends Character {
     });
   }
 
-  handleFrame(deltaTime: number): void {
-    if (this.movingTimeLeft !== undefined) {
+  getHitboxesOnScene(facing: LeftRight) {
+    if (facing === "right") {
+      return {
+        character: {
+          x:
+            this.x +
+            this.rightFacingHitboxes.character.x * SPRITE_SIZE_MULTIPLIER,
+          y:
+            this.y -
+            this.yDrawOffset +
+            this.rightFacingHitboxes.character.y * SPRITE_SIZE_MULTIPLIER,
+          w: this.rightFacingHitboxes.character.w * SPRITE_SIZE_MULTIPLIER,
+          h: this.rightFacingHitboxes.character.h * SPRITE_SIZE_MULTIPLIER,
+        },
+        sword: {
+          x: this.x + this.rightFacingHitboxes.sword.x * SPRITE_SIZE_MULTIPLIER,
+          y:
+            this.y -
+            this.yDrawOffset +
+            this.rightFacingHitboxes.sword.y * SPRITE_SIZE_MULTIPLIER,
+          w: this.rightFacingHitboxes.sword.w * SPRITE_SIZE_MULTIPLIER,
+          h: this.rightFacingHitboxes.sword.h * SPRITE_SIZE_MULTIPLIER,
+        },
+      };
+    }
+
+    return {
+      character: {
+        x:
+          this.x + this.leftFacingHitboxes.character.x * SPRITE_SIZE_MULTIPLIER,
+        y:
+          this.y -
+          this.yDrawOffset +
+          this.leftFacingHitboxes.character.y * SPRITE_SIZE_MULTIPLIER,
+        w: this.leftFacingHitboxes.character.w * SPRITE_SIZE_MULTIPLIER,
+        h: this.leftFacingHitboxes.character.h * SPRITE_SIZE_MULTIPLIER,
+      },
+      sword: {
+        x: this.x + this.leftFacingHitboxes.sword.x * SPRITE_SIZE_MULTIPLIER,
+        y:
+          this.y -
+          this.yDrawOffset +
+          this.leftFacingHitboxes.sword.y * SPRITE_SIZE_MULTIPLIER,
+        w: this.leftFacingHitboxes.sword.w * SPRITE_SIZE_MULTIPLIER,
+        h: this.leftFacingHitboxes.sword.h * SPRITE_SIZE_MULTIPLIER,
+      },
+    };
+  }
+
+  handleFrame(deltaTime: number, terrain: Terrain): void {
+    const hitboxes = this.getHitboxesOnScene(this._facing);
+
+    if (
+      this.movingTimeLeft !== undefined &&
+      this.attackTimeLeft === undefined
+    ) {
       const moveDistance = deltaTime * this.walkingSpeedMultiplier;
-      if (this._facing === "right") {
+      if (
+        this._facing === "right" &&
+        hitboxes.character.x + hitboxes.character.w < terrain.skyRectangle.w
+      ) {
         this.x += moveDistance;
-      } else {
+      }
+      if (
+        this._facing === "left" &&
+        hitboxes.character.x > terrain.skyRectangle.x
+      ) {
         this.x -= moveDistance;
       }
 

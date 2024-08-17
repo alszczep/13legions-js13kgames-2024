@@ -26,7 +26,36 @@ export class Stage {
     enemyAttackTimeInMs: number
   ) {
     this.canvasSize = canvasSize;
-    this.terrain = new Terrain(skyColor, groundColor);
+    this.terrain = new Terrain(
+      skyColor,
+      groundColor,
+      {
+        x: 0,
+        y: 0,
+        w: canvasSize.w,
+        h: canvasSize.h,
+      },
+      [
+        {
+          x: 0,
+          y: canvasSize.h - TERRAIN_FLOOR_HEIGHT,
+          w: canvasSize.w,
+          h: TERRAIN_FLOOR_HEIGHT,
+        },
+        {
+          x: canvasSize.w / 6,
+          y: canvasSize.h - 175,
+          w: canvasSize.w / 6,
+          h: 25,
+        },
+        {
+          x: canvasSize.w - canvasSize.w / 3,
+          y: canvasSize.h - 175,
+          w: canvasSize.w / 6,
+          h: 25,
+        },
+      ]
+    );
 
     this.player = new Player(
       canvasSize.w / 2,

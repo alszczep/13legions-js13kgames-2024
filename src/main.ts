@@ -2,10 +2,10 @@ import { loadSpriteSheet } from "./assets/loadSpriteSheet";
 import { getGl } from "./helpers/rendering/getGl";
 import { glCreateTexture } from "./helpers/rendering/gl/glCreateTexture";
 import { spriteSheetData } from "./assets/spriteSheetData";
-import { colorKeys, colorVectors } from "./colors";
+import { colorKeys } from "./colors";
 import { TerrainProgram } from "./programs/TerrainProgram";
 import { CharacterProgram } from "./programs/CharacterProgram";
-import { SPRITE_SIZE_MULTIPLIER, TERRAIN_FLOOR_HEIGHT } from "./consts";
+import { SPRITE_SIZE_MULTIPLIER } from "./consts";
 import { Stage } from "./game/Stage";
 
 async function main() {
@@ -70,7 +70,7 @@ async function main() {
     const deltaTime = frameTime - lastFrameTime;
     lastFrameTime = frameTime;
 
-    currentStage.player.handleFrame(deltaTime);
+    currentStage.player.handleFrame(deltaTime, currentStage.terrain);
     currentStage.enemies.forEach((enemy) => {
       enemy.handleFrame(deltaTime);
     });
@@ -81,33 +81,8 @@ async function main() {
     terrainProgram.bindVao();
     terrainProgram.useProgram();
 
-    terrainProgram.drawTerrain({
-      x: 0,
-      y: 0,
-      w: gl.canvas.width,
-      h: gl.canvas.height,
-      color: colorVectors.sky,
-    });
-    terrainProgram.drawTerrain({
-      x: 0,
-      y: gl.canvas.height - TERRAIN_FLOOR_HEIGHT,
-      w: gl.canvas.width,
-      h: TERRAIN_FLOOR_HEIGHT,
-      color: colorVectors.ground,
-    });
-    terrainProgram.drawTerrain({
-      x: gl.canvas.width / 6,
-      y: gl.canvas.height - 175,
-      w: gl.canvas.width / 6,
-      h: 25,
-      color: colorVectors.ground,
-    });
-    terrainProgram.drawTerrain({
-      x: gl.canvas.width - gl.canvas.width / 3,
-      y: gl.canvas.height - 175,
-      w: gl.canvas.width / 6,
-      h: 25,
-      color: colorVectors.ground,
+    currentStage.terrain.getDrawData().forEach((drawData) => {
+      terrainProgram.drawTerrain(drawData);
     });
 
     characterProgram.bindVao();

@@ -14,6 +14,10 @@ type Attributes =
 type Uniforms =
   (typeof terrainShaderUniforms)[keyof typeof terrainShaderUniforms];
 
+export type DrawTerrainParams = {
+  color: [number, number, number];
+} & DimensionsAndCoordinates;
+
 export class TerrainProgram extends Program<Attributes, Uniforms> {
   constructor(gl: WebGL2RenderingContext) {
     super(gl, terrainVertexShader, terrainFragmentShader);
@@ -38,13 +42,7 @@ export class TerrainProgram extends Program<Attributes, Uniforms> {
     );
   }
 
-  drawTerrain({
-    x,
-    y,
-    w,
-    h,
-    color,
-  }: DimensionsAndCoordinates & { color: [number, number, number] }) {
+  drawTerrain({ x, y, w, h, color }: DrawTerrainParams) {
     this.gl.uniform3fv(this.uniformsLocations.u_color, new Float32Array(color));
 
     this.bindBuffer();

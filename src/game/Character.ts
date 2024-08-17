@@ -1,6 +1,8 @@
 import { SpriteData } from "../assets/spriteSheetData";
 import { SPRITE_SIZE_MULTIPLIER } from "../consts";
 import { DrawCharacterParams } from "../programs/CharacterProgram";
+import { LeftRight } from "../types/LeftRight";
+import { Terrain } from "./Terrain";
 
 export abstract class Character {
   spriteStanding: SpriteData;
@@ -8,7 +10,7 @@ export abstract class Character {
 
   x: number;
   y: number;
-  _facing: "left" | "right" = "right";
+  _facing: LeftRight = "right";
 
   yDrawOffset: number;
 
@@ -25,6 +27,6 @@ export abstract class Character {
     this.yDrawOffset = spriteStanding.h * SPRITE_SIZE_MULTIPLIER;
   }
 
-  abstract handleFrame(deltaTime: number): void;
+  abstract handleFrame(deltaTime: number, terrain: Terrain): void;
   abstract getDrawData(): DrawCharacterParams;
 }
