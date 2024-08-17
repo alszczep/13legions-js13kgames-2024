@@ -1,3 +1,4 @@
+import { SPRITE_SIZE_MULTIPLIER } from "../consts";
 import { dimensionsToRectangleVertices } from "../helpers/rendering/dimensionsToRectangleVertices";
 import { DimensionsAndCoordinates } from "../types/DimensionsAndCoordinates";
 import spriteSheetDataJson from "./spriteSheetData.json";
@@ -20,6 +21,8 @@ export const spriteSheetData = Object.entries(
     ...acc,
     [name]: {
       ...sprite.frame,
+      w: sprite.frame.w * SPRITE_SIZE_MULTIPLIER,
+      h: sprite.frame.h * SPRITE_SIZE_MULTIPLIER,
       texCoords: dimensionsToRectangleVertices(sprite.frame, {
         base: spriteSheetSize,
       }),

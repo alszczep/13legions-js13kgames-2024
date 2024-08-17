@@ -5,7 +5,6 @@ import { spriteSheetData } from "./assets/spriteSheetData";
 import { colorKeys } from "./colors";
 import { TerrainProgram } from "./programs/TerrainProgram";
 import { CharacterProgram } from "./programs/CharacterProgram";
-import { SPRITE_SIZE_MULTIPLIER } from "./consts";
 import { Stage } from "./game/Stage";
 
 async function main() {
@@ -50,18 +49,14 @@ async function main() {
     spriteSheetData["enemy-knight 0.aseprite"],
     spriteSheetData["enemy-knight 1.aseprite"],
     100,
-    gl.canvas.height -
-      50 -
-      spriteSheetData["enemy-knight 0.aseprite"].h * SPRITE_SIZE_MULTIPLIER,
+    gl.canvas.height - 50 - spriteSheetData["enemy-knight 0.aseprite"].h,
     colorKeys.red
   );
   currentStage.spawnEnemy(
     spriteSheetData["enemy-knight 0.aseprite"],
     spriteSheetData["enemy-knight 1.aseprite"],
     200,
-    gl.canvas.height -
-      50 -
-      spriteSheetData["enemy-knight 0.aseprite"].h * SPRITE_SIZE_MULTIPLIER,
+    gl.canvas.height - 50 - spriteSheetData["enemy-knight 0.aseprite"].h,
     colorKeys.yellow
   );
 

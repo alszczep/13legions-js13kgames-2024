@@ -25,16 +25,16 @@ export class Player extends Character {
 
   rightFacingHitboxes: Hitboxes = {
     character: {
-      x: 10,
-      y: 0,
-      w: 11,
-      h: 16,
+      x: 10 * SPRITE_SIZE_MULTIPLIER,
+      y: 0 * SPRITE_SIZE_MULTIPLIER,
+      w: 11 * SPRITE_SIZE_MULTIPLIER,
+      h: 16 * SPRITE_SIZE_MULTIPLIER,
     },
     sword: {
-      x: 19,
-      y: 2,
-      w: 13,
-      h: 14,
+      x: 19 * SPRITE_SIZE_MULTIPLIER,
+      y: 2 * SPRITE_SIZE_MULTIPLIER,
+      w: 13 * SPRITE_SIZE_MULTIPLIER,
+      h: 14 * SPRITE_SIZE_MULTIPLIER,
     },
   };
   leftFacingHitboxes: Hitboxes = {} as Hitboxes;
@@ -136,47 +136,36 @@ export class Player extends Character {
     if (facing === "right") {
       return {
         character: {
-          x:
-            this.x +
-            this.rightFacingHitboxes.character.x * SPRITE_SIZE_MULTIPLIER,
+          x: this.x + this.rightFacingHitboxes.character.x,
           y:
             this.y -
-            this.yDrawOffset +
-            this.rightFacingHitboxes.character.y * SPRITE_SIZE_MULTIPLIER,
-          w: this.rightFacingHitboxes.character.w * SPRITE_SIZE_MULTIPLIER,
-          h: this.rightFacingHitboxes.character.h * SPRITE_SIZE_MULTIPLIER,
+            this.spriteAttacking.h +
+            this.rightFacingHitboxes.character.y,
+          w: this.rightFacingHitboxes.character.w,
+          h: this.rightFacingHitboxes.character.h,
         },
         sword: {
-          x: this.x + this.rightFacingHitboxes.sword.x * SPRITE_SIZE_MULTIPLIER,
-          y:
-            this.y -
-            this.yDrawOffset +
-            this.rightFacingHitboxes.sword.y * SPRITE_SIZE_MULTIPLIER,
-          w: this.rightFacingHitboxes.sword.w * SPRITE_SIZE_MULTIPLIER,
-          h: this.rightFacingHitboxes.sword.h * SPRITE_SIZE_MULTIPLIER,
+          x: this.x + this.rightFacingHitboxes.sword.x,
+          y: this.y - this.spriteAttacking.h + this.rightFacingHitboxes.sword.y,
+          w: this.rightFacingHitboxes.sword.w,
+          h: this.rightFacingHitboxes.sword.h,
         },
       };
     }
 
     return {
       character: {
-        x:
-          this.x + this.leftFacingHitboxes.character.x * SPRITE_SIZE_MULTIPLIER,
+        x: this.x + this.leftFacingHitboxes.character.x,
         y:
-          this.y -
-          this.yDrawOffset +
-          this.leftFacingHitboxes.character.y * SPRITE_SIZE_MULTIPLIER,
-        w: this.leftFacingHitboxes.character.w * SPRITE_SIZE_MULTIPLIER,
-        h: this.leftFacingHitboxes.character.h * SPRITE_SIZE_MULTIPLIER,
+          this.y - this.spriteAttacking.h + this.leftFacingHitboxes.character.y,
+        w: this.leftFacingHitboxes.character.w,
+        h: this.leftFacingHitboxes.character.h,
       },
       sword: {
-        x: this.x + this.leftFacingHitboxes.sword.x * SPRITE_SIZE_MULTIPLIER,
-        y:
-          this.y -
-          this.yDrawOffset +
-          this.leftFacingHitboxes.sword.y * SPRITE_SIZE_MULTIPLIER,
-        w: this.leftFacingHitboxes.sword.w * SPRITE_SIZE_MULTIPLIER,
-        h: this.leftFacingHitboxes.sword.h * SPRITE_SIZE_MULTIPLIER,
+        x: this.x + this.leftFacingHitboxes.sword.x,
+        y: this.y - this.spriteAttacking.h + this.leftFacingHitboxes.sword.y,
+        w: this.leftFacingHitboxes.sword.w,
+        h: this.leftFacingHitboxes.sword.h,
       },
     };
   }
@@ -230,7 +219,7 @@ export class Player extends Character {
 
     return {
       x: this.x,
-      y: this.y - this.yDrawOffset,
+      y: this.y - this.spriteStanding.h,
       w: sprite.w,
       h: sprite.h,
       texCoords: sprite.texCoords,

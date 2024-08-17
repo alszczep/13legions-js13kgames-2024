@@ -1,4 +1,4 @@
-import { FLOAT_SIZE_IN_BYTES, SPRITE_SIZE_MULTIPLIER } from "../consts";
+import { FLOAT_SIZE_IN_BYTES } from "../consts";
 import { combineVertexAttributeValues } from "../helpers/rendering/combinePositionAndTexCords";
 import { dimensionsToRectangleVertices } from "../helpers/rendering/dimensionsToRectangleVertices";
 import {
@@ -72,8 +72,8 @@ export class CharacterProgram extends Program<Attributes, Uniforms> {
       {
         x,
         y,
-        w: w * SPRITE_SIZE_MULTIPLIER,
-        h: h * SPRITE_SIZE_MULTIPLIER,
+        w: w,
+        h: h,
       },
       { flipX }
     );
