@@ -45,7 +45,7 @@ export class Enemy extends Character {
       h: this.spriteStanding.h,
       texCoords: sprite.texCoords,
       grayOffsetColor: colorVectors[this.color],
-      flipX: this.facing === "left",
+      flipX: this._facing === "left",
     };
   }
 }

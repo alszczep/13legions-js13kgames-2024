@@ -8,7 +8,7 @@ export abstract class Character {
 
   x: number;
   y: number;
-  facing: "left" | "right" = "right";
+  _facing: "left" | "right" = "right";
 
   yDrawOffset: number;
 

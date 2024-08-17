@@ -43,7 +43,7 @@ export abstract class Program<
     this.gl.bindBuffer(this.gl.ARRAY_BUFFER, this.buffer);
   }
 
-  saveAttributesLocations(attributes: TAttribute[]) {
+  _saveAttributesLocations(attributes: TAttribute[]) {
     const attributesLocations = {} as Record<TAttribute, number>;
 
     for (const attribute of attributes) {
@@ -55,10 +55,10 @@ export abstract class Program<
 
     this.attributesLocations = attributesLocations;
 
-    this.configureAttributes();
+    this._configureAttributes();
   }
 
-  saveUniformsLocations(uniforms: TUniform[]) {
+  _saveUniformsLocations(uniforms: TUniform[]) {
     const uniformsLocations = {} as Record<TUniform, WebGLUniformLocation>;
 
     for (const uniform of uniforms) {
@@ -71,5 +71,5 @@ export abstract class Program<
     this.uniformsLocations = uniformsLocations;
   }
 
-  abstract configureAttributes(): void;
+  abstract _configureAttributes(): void;
 }

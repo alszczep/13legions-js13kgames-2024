@@ -27,7 +27,7 @@ export class Player extends Character {
 
   private createEventListeners() {
     const move = (direction: "left" | "right") => {
-      this.facing = direction;
+      this._facing = direction;
       this.isMoving = true;
       this.movingTimeLeft = this.moveTimePerClickInMs;
     };
@@ -63,12 +63,12 @@ export class Player extends Character {
     window.addEventListener("keyup", (e) => {
       switch (e.key) {
         case "d":
-          if (this.isMoving && this.facing === "right") {
+          if (this.isMoving && this._facing === "right") {
             this.isMoving = false;
           }
           break;
         case "a":
-          if (this.isMoving && this.facing === "left") {
+          if (this.isMoving && this._facing === "left") {
             this.isMoving = false;
           }
           break;
@@ -94,7 +94,7 @@ export class Player extends Character {
   handleFrame(deltaTime: number): void {
     if (this.movingTimeLeft !== undefined) {
       const moveDistance = deltaTime * this.walkingSpeedMultiplier;
-      if (this.facing === "right") {
+      if (this._facing === "right") {
         this.x += moveDistance;
       } else {
         this.x -= moveDistance;
@@ -133,7 +133,7 @@ export class Player extends Character {
       h: sprite.h,
       texCoords: sprite.texCoords,
       grayOffsetColor: colorVectors[this.swordColor],
-      flipX: this.facing === "left",
+      flipX: this._facing === "left",
     };
   }
 }
