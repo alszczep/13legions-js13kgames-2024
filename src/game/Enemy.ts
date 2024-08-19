@@ -8,7 +8,6 @@ import {
 } from "../helpers/game/hitboxes";
 import { DrawCharacterParams } from "../programs/CharacterProgram";
 import { DimensionsAndCoordinates } from "../types/DimensionsAndCoordinates";
-import { LeftRight } from "../types/LeftRight";
 import { Character } from "./Character";
 
 type Hitboxes = {
@@ -52,9 +51,11 @@ export class Enemy extends Character {
     walkingSpeedMultiplier: number,
     standingTimeBeforeAttackInMs: number,
     attackTimeInMs: number,
-    attackCooldownInMs: number
+    attackCooldownInMs: number,
+    maxHp: number,
+    dmg: number
   ) {
-    super(spriteStanding, spriteAttacking, x, y);
+    super(spriteStanding, spriteAttacking, x, y, maxHp, dmg);
 
     this._leftFacingHitboxes = {
       body: {
@@ -79,9 +80,11 @@ export class Enemy extends Character {
     this._attackCooldownInMs = attackCooldownInMs;
   }
 
-  getHitboxesOnScene(facing: LeftRight): Hitboxes {
+  getHitboxesOnScene(): Hitboxes {
     const hb =
-      facing === "right" ? this._rightFacingHitboxes : this._leftFacingHitboxes;
+      this._facing === "right"
+        ? this._rightFacingHitboxes
+        : this._leftFacingHitboxes;
 
     return {
       body: {
@@ -97,8 +100,12 @@ export class Enemy extends Character {
     };
   }
 
-  handleFrame(deltaTime: number, playerHitbox: DimensionsAndCoordinates): void {
-    const hitboxes = this.getHitboxesOnScene(this._facing);
+  handleFrame(
+    deltaTime: number,
+    playerHitbox: DimensionsAndCoordinates,
+    hitPlayer: (dmg: number) => void
+  ): void {
+    const hitboxes = this.getHitboxesOnScene();
 
     if (
       this._attackTimeLeft === undefined &&
@@ -125,6 +132,7 @@ export class Enemy extends Character {
 
         if (doHitboxesOverlap(playerHitbox, hitboxes.sword)) {
           this._attackTimeLeft = this._attackTimeInMs;
+          hitPlayer(this.dmg);
         }
       }
     }

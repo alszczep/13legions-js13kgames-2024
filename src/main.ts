@@ -43,8 +43,10 @@ async function main() {
     colorKeys.ground,
     0.2,
     500,
-    300,
-    500
+    700,
+    400,
+    60,
+    50
   );
   currentStage.spawnEnemy(
     spriteSheetData["enemy-knight 0.aseprite"],
@@ -63,14 +65,31 @@ async function main() {
 
   let lastFrameTime = 0;
   function drawScene(frameTime: DOMHighResTimeStamp) {
+    if (currentStage.player.currentHp <= 0) {
+      // TODO: GAME OVER
+      return;
+    }
+
     const deltaTime = frameTime - lastFrameTime;
     lastFrameTime = frameTime;
 
-    currentStage.player.handleFrame(deltaTime, currentStage.terrain);
+    currentStage.player.handleFrame(
+      deltaTime,
+      currentStage.terrain,
+      currentStage.enemies.map((e) => ({
+        hitbox: e.getHitboxesOnScene().body,
+        hit: (dmg: number) => e.getHit(dmg),
+        color: e.color,
+      }))
+    );
+    currentStage.enemies = currentStage.enemies.filter(
+      (enemy) => enemy.currentHp > 0
+    );
     currentStage.enemies.forEach((enemy) => {
       enemy.handleFrame(
         deltaTime,
-        currentStage.player.getHitboxesOnScene(currentStage.player._facing).body
+        currentStage.player.getHitboxesOnScene().body,
+        (dmg: number) => currentStage.player.getHit(dmg)
       );
     });
 

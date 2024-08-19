@@ -10,16 +10,29 @@ export abstract class Character {
   y: number;
   _facing: LeftRight = "right";
 
+  currentHp: number;
+  maxHp: number;
+  dmg: number;
+
   constructor(
     spriteStanding: SpriteData,
     spriteAttacking: SpriteData,
     x: number,
-    y: number
+    y: number,
+    maxHp: number,
+    dmg: number
   ) {
     this.spriteStanding = spriteStanding;
     this.spriteAttacking = spriteAttacking;
     this.x = x;
     this.y = y;
+    this.currentHp = maxHp;
+    this.maxHp = maxHp;
+    this.dmg = dmg;
+  }
+
+  getHit(dmg: number) {
+    this.currentHp -= dmg;
   }
 
   abstract getDrawData(): DrawCharacterParams;

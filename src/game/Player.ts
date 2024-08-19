@@ -1,9 +1,9 @@
 import { spriteSheetData } from "../assets/spriteSheetData";
 import { BaseColors, colorKeys, colorVectors } from "../colors";
 import { SPRITE_SIZE_MULTIPLIER } from "../consts";
+import { doHitboxesOverlap } from "../helpers/game/hitboxes";
 import { DrawCharacterParams } from "../programs/CharacterProgram";
 import { DimensionsAndCoordinates } from "../types/DimensionsAndCoordinates";
-import { LeftRight } from "../types/LeftRight";
 import { Character } from "./Character";
 import { Terrain } from "./Terrain";
 
@@ -33,9 +33,9 @@ export class Player extends Character {
 
   _rightFacingHitboxes: Hitboxes = {
     body: {
-      x: 10 * SPRITE_SIZE_MULTIPLIER,
+      x: 11 * SPRITE_SIZE_MULTIPLIER,
       y: 0 * SPRITE_SIZE_MULTIPLIER,
-      w: 11 * SPRITE_SIZE_MULTIPLIER,
+      w: 10 * SPRITE_SIZE_MULTIPLIER,
       h: 16 * SPRITE_SIZE_MULTIPLIER,
     },
     sword: {
@@ -58,7 +58,9 @@ export class Player extends Character {
       spriteSheetData["character-2 0.aseprite"],
       spriteSheetData["character-2 1.aseprite"],
       x,
-      y
+      y,
+      1000,
+      50
     );
 
     this._leftFacingHitboxes = {
@@ -157,9 +159,11 @@ export class Player extends Character {
     });
   }
 
-  getHitboxesOnScene(facing: LeftRight): Hitboxes {
+  getHitboxesOnScene(): Hitboxes {
     const hb =
-      facing === "right" ? this._rightFacingHitboxes : this._leftFacingHitboxes;
+      this._facing === "right"
+        ? this._rightFacingHitboxes
+        : this._leftFacingHitboxes;
 
     return {
       body: {
@@ -180,8 +184,16 @@ export class Player extends Character {
     };
   }
 
-  handleFrame(deltaTime: number, terrain: Terrain): void {
-    const hitboxes = this.getHitboxesOnScene(this._facing);
+  handleFrame(
+    deltaTime: number,
+    terrain: Terrain,
+    enemies: {
+      hitbox: DimensionsAndCoordinates;
+      hit: (dmg: number) => void;
+      color: BaseColors;
+    }[]
+  ): void {
+    const hitboxes = this.getHitboxesOnScene();
 
     if (this._isMovingVertically) {
       const moveDistance = deltaTime * this._jumpSpeedMultiplier;
@@ -231,7 +243,7 @@ export class Player extends Character {
       }
 
       if (this._isMovingVertically === undefined) {
-        const updatedHitboxes = this.getHitboxesOnScene(this._facing);
+        const updatedHitboxes = this.getHitboxesOnScene();
         const groundInReach = terrain.groundRectangles.find((r) => {
           const horizontal =
             r.x < updatedHitboxes.feet.x + updatedHitboxes.feet.w &&
@@ -259,6 +271,17 @@ export class Player extends Character {
     }
 
     if (this._attackTimeLeftInMs !== undefined) {
+      if (this._attackTimeLeftInMs === this._attackTimeInMs) {
+        enemies.forEach((e) => {
+          if (
+            doHitboxesOverlap(hitboxes.sword, e.hitbox) &&
+            this.swordColor === e.color
+          ) {
+            e.hit(this.dmg);
+          }
+        });
+      }
+
       this._attackTimeLeftInMs -= deltaTime;
 
       if (this._attackTimeLeftInMs <= 0) {

@@ -13,10 +13,12 @@ export class Stage {
   player: Player;
   enemies: Enemy[] = [];
 
-  enemyWalkingSpeedMultiplier: number;
-  enemyStandingTimeBeforeAttackInMs: number;
-  enemyAttackTimeInMs: number;
-  enemyAttackCooldownInMs: number;
+  _enemyWalkingSpeedMultiplier: number;
+  _enemyStandingTimeBeforeAttackInMs: number;
+  _enemyAttackTimeInMs: number;
+  _enemyAttackCooldownInMs: number;
+  _enemyMaxHp: number;
+  _enemyDmg: number;
 
   constructor(
     canvasSize: Dimensions,
@@ -25,7 +27,9 @@ export class Stage {
     enemyWalkingSpeedMultiplier: number,
     enemyStandingTimeBeforeAttackInMs: number,
     enemyAttackTimeInMs: number,
-    enemyAttackCooldownInMs: number
+    enemyAttackCooldownInMs: number,
+    enemyMaxHp: number,
+    enemyDmg: number
   ) {
     this.canvasSize = canvasSize;
     this.terrain = new Terrain(
@@ -64,10 +68,12 @@ export class Stage {
       canvasSize.h - TERRAIN_FLOOR_HEIGHT
     );
 
-    this.enemyWalkingSpeedMultiplier = enemyWalkingSpeedMultiplier;
-    this.enemyStandingTimeBeforeAttackInMs = enemyStandingTimeBeforeAttackInMs;
-    this.enemyAttackTimeInMs = enemyAttackTimeInMs;
-    this.enemyAttackCooldownInMs = enemyAttackCooldownInMs;
+    this._enemyWalkingSpeedMultiplier = enemyWalkingSpeedMultiplier;
+    this._enemyStandingTimeBeforeAttackInMs = enemyStandingTimeBeforeAttackInMs;
+    this._enemyAttackTimeInMs = enemyAttackTimeInMs;
+    this._enemyAttackCooldownInMs = enemyAttackCooldownInMs;
+    this._enemyMaxHp = enemyMaxHp;
+    this._enemyDmg = enemyDmg;
   }
 
   spawnEnemy(
@@ -84,10 +90,12 @@ export class Stage {
         x,
         y,
         color,
-        this.enemyWalkingSpeedMultiplier,
-        this.enemyStandingTimeBeforeAttackInMs,
-        this.enemyAttackTimeInMs,
-        this.enemyAttackCooldownInMs
+        this._enemyWalkingSpeedMultiplier,
+        this._enemyStandingTimeBeforeAttackInMs,
+        this._enemyAttackTimeInMs,
+        this._enemyAttackCooldownInMs,
+        this._enemyMaxHp,
+        this._enemyDmg
       )
     );
   }
