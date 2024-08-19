@@ -1,7 +1,6 @@
 import { SpriteData } from "../assets/spriteSheetData";
 import { DrawCharacterParams } from "../programs/CharacterProgram";
 import { LeftRight } from "../types/LeftRight";
-import { Terrain } from "./Terrain";
 
 export abstract class Character {
   spriteStanding: SpriteData;
@@ -23,6 +22,5 @@ export abstract class Character {
     this.y = y;
   }
 
-  abstract handleFrame(deltaTime: number, terrain: Terrain): void;
   abstract getDrawData(): DrawCharacterParams;
 }

@@ -43,20 +43,21 @@ async function main() {
     colorKeys.ground,
     0.2,
     500,
-    300
+    300,
+    500
   );
   currentStage.spawnEnemy(
     spriteSheetData["enemy-knight 0.aseprite"],
     spriteSheetData["enemy-knight 1.aseprite"],
     100,
-    gl.canvas.height - 50 - spriteSheetData["enemy-knight 0.aseprite"].h,
+    gl.canvas.height - 50,
     colorKeys.red
   );
   currentStage.spawnEnemy(
     spriteSheetData["enemy-knight 0.aseprite"],
     spriteSheetData["enemy-knight 1.aseprite"],
     200,
-    gl.canvas.height - 50 - spriteSheetData["enemy-knight 0.aseprite"].h,
+    gl.canvas.height - 50,
     colorKeys.yellow
   );
 
@@ -67,7 +68,10 @@ async function main() {
 
     currentStage.player.handleFrame(deltaTime, currentStage.terrain);
     currentStage.enemies.forEach((enemy) => {
-      enemy.handleFrame(deltaTime);
+      enemy.handleFrame(
+        deltaTime,
+        currentStage.player.getHitboxesOnScene(currentStage.player._facing).body
+      );
     });
 
     // gl.clearColor(0, 0, 0, 0);

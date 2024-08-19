@@ -8,7 +8,7 @@ import { Character } from "./Character";
 import { Terrain } from "./Terrain";
 
 type Hitboxes = {
-  character: DimensionsAndCoordinates;
+  body: DimensionsAndCoordinates;
   sword: DimensionsAndCoordinates;
   feet: DimensionsAndCoordinates;
 };
@@ -31,17 +31,17 @@ export class Player extends Character {
   _jumpUpTimeInMs = 225;
   _jumpSpeedMultiplier = 0.75;
 
-  rightFacingHitboxes: Hitboxes = {
-    character: {
+  _rightFacingHitboxes: Hitboxes = {
+    body: {
       x: 10 * SPRITE_SIZE_MULTIPLIER,
       y: 0 * SPRITE_SIZE_MULTIPLIER,
       w: 11 * SPRITE_SIZE_MULTIPLIER,
       h: 16 * SPRITE_SIZE_MULTIPLIER,
     },
     sword: {
-      x: 19 * SPRITE_SIZE_MULTIPLIER,
+      x: 15 * SPRITE_SIZE_MULTIPLIER,
       y: 2 * SPRITE_SIZE_MULTIPLIER,
-      w: 13 * SPRITE_SIZE_MULTIPLIER,
+      w: 17 * SPRITE_SIZE_MULTIPLIER,
       h: 14 * SPRITE_SIZE_MULTIPLIER,
     },
     feet: {
@@ -51,7 +51,7 @@ export class Player extends Character {
       h: 2 * SPRITE_SIZE_MULTIPLIER,
     },
   };
-  leftFacingHitboxes: Hitboxes = {} as Hitboxes;
+  _leftFacingHitboxes: Hitboxes = {} as Hitboxes;
 
   constructor(x: number, y: number) {
     super(
@@ -61,25 +61,25 @@ export class Player extends Character {
       y
     );
 
-    this.leftFacingHitboxes = {
-      character: {
-        ...this.rightFacingHitboxes.character,
+    this._leftFacingHitboxes = {
+      body: {
+        ...this._rightFacingHitboxes.body,
         x:
           this.spriteStanding.w -
-          (this.rightFacingHitboxes.character.x +
-            this.rightFacingHitboxes.character.w),
+          (this._rightFacingHitboxes.body.x + this._rightFacingHitboxes.body.w),
       },
       sword: {
-        ...this.rightFacingHitboxes.sword,
+        ...this._rightFacingHitboxes.sword,
         x:
           this.spriteStanding.w -
-          (this.rightFacingHitboxes.sword.x + this.rightFacingHitboxes.sword.w),
+          (this._rightFacingHitboxes.sword.x +
+            this._rightFacingHitboxes.sword.w),
       },
       feet: {
-        ...this.rightFacingHitboxes.feet,
+        ...this._rightFacingHitboxes.feet,
         x:
           this.spriteStanding.w -
-          (this.rightFacingHitboxes.feet.x + this.rightFacingHitboxes.feet.w),
+          (this._rightFacingHitboxes.feet.x + this._rightFacingHitboxes.feet.w),
       },
     };
 
@@ -158,51 +158,24 @@ export class Player extends Character {
   }
 
   getHitboxesOnScene(facing: LeftRight): Hitboxes {
-    if (facing === "right") {
-      return {
-        character: {
-          x: this.x + this.rightFacingHitboxes.character.x,
-          y:
-            this.y -
-            this.spriteAttacking.h +
-            this.rightFacingHitboxes.character.y,
-          w: this.rightFacingHitboxes.character.w,
-          h: this.rightFacingHitboxes.character.h,
-        },
-        sword: {
-          x: this.x + this.rightFacingHitboxes.sword.x,
-          y: this.y - this.spriteAttacking.h + this.rightFacingHitboxes.sword.y,
-          w: this.rightFacingHitboxes.sword.w,
-          h: this.rightFacingHitboxes.sword.h,
-        },
-        feet: {
-          x: this.x + this.rightFacingHitboxes.feet.x,
-          y: this.y - this.spriteAttacking.h + this.rightFacingHitboxes.feet.y,
-          w: this.rightFacingHitboxes.feet.w,
-          h: this.rightFacingHitboxes.feet.h,
-        },
-      };
-    }
+    const hb =
+      facing === "right" ? this._rightFacingHitboxes : this._leftFacingHitboxes;
 
     return {
-      character: {
-        x: this.x + this.leftFacingHitboxes.character.x,
-        y:
-          this.y - this.spriteAttacking.h + this.leftFacingHitboxes.character.y,
-        w: this.leftFacingHitboxes.character.w,
-        h: this.leftFacingHitboxes.character.h,
+      body: {
+        ...hb.body,
+        x: this.x + hb.body.x,
+        y: this.y - this.spriteStanding.h + hb.body.y,
       },
       sword: {
-        x: this.x + this.leftFacingHitboxes.sword.x,
-        y: this.y - this.spriteAttacking.h + this.leftFacingHitboxes.sword.y,
-        w: this.leftFacingHitboxes.sword.w,
-        h: this.leftFacingHitboxes.sword.h,
+        ...hb.sword,
+        x: this.x + hb.sword.x,
+        y: this.y - this.spriteStanding.h + hb.sword.y,
       },
       feet: {
-        x: this.x + this.leftFacingHitboxes.feet.x,
-        y: this.y - this.spriteAttacking.h + this.leftFacingHitboxes.feet.y,
-        w: this.leftFacingHitboxes.feet.w,
-        h: this.leftFacingHitboxes.feet.h,
+        ...hb.feet,
+        x: this.x + hb.feet.x,
+        y: this.y - this.spriteStanding.h + hb.feet.y,
       },
     };
   }
@@ -249,14 +222,11 @@ export class Player extends Character {
       const moveDistance = deltaTime * this._walkingSpeedMultiplier;
       if (
         this._facing === "right" &&
-        hitboxes.character.x + hitboxes.character.w < terrain.skyRectangle.w
+        hitboxes.body.x + hitboxes.body.w < terrain.skyRectangle.w
       ) {
         this.x += moveDistance;
       }
-      if (
-        this._facing === "left" &&
-        hitboxes.character.x > terrain.skyRectangle.x
-      ) {
+      if (this._facing === "left" && hitboxes.body.x > terrain.skyRectangle.x) {
         this.x -= moveDistance;
       }
 
@@ -305,7 +275,7 @@ export class Player extends Character {
 
     return {
       x: this.x,
-      y: this.y - this.spriteStanding.h,
+      y: this.y - sprite.h,
       w: sprite.w,
       h: sprite.h,
       texCoords: sprite.texCoords,

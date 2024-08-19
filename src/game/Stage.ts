@@ -16,6 +16,7 @@ export class Stage {
   enemyWalkingSpeedMultiplier: number;
   enemyStandingTimeBeforeAttackInMs: number;
   enemyAttackTimeInMs: number;
+  enemyAttackCooldownInMs: number;
 
   constructor(
     canvasSize: Dimensions,
@@ -23,7 +24,8 @@ export class Stage {
     groundColor: Colors,
     enemyWalkingSpeedMultiplier: number,
     enemyStandingTimeBeforeAttackInMs: number,
-    enemyAttackTimeInMs: number
+    enemyAttackTimeInMs: number,
+    enemyAttackCooldownInMs: number
   ) {
     this.canvasSize = canvasSize;
     this.terrain = new Terrain(
@@ -65,6 +67,7 @@ export class Stage {
     this.enemyWalkingSpeedMultiplier = enemyWalkingSpeedMultiplier;
     this.enemyStandingTimeBeforeAttackInMs = enemyStandingTimeBeforeAttackInMs;
     this.enemyAttackTimeInMs = enemyAttackTimeInMs;
+    this.enemyAttackCooldownInMs = enemyAttackCooldownInMs;
   }
 
   spawnEnemy(
@@ -83,7 +86,8 @@ export class Stage {
         color,
         this.enemyWalkingSpeedMultiplier,
         this.enemyStandingTimeBeforeAttackInMs,
-        this.enemyAttackTimeInMs
+        this.enemyAttackTimeInMs,
+        this.enemyAttackCooldownInMs
       )
     );
   }
