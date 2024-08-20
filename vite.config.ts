@@ -24,6 +24,7 @@ export default defineConfig({
   plugins: [
     checker({
       typescript: true,
+      overlay: false,
     }),
     ViteMinifyPlugin({}),
   ],

@@ -14,6 +14,8 @@ const knightsPerStage = 13;
 
 export class Stage {
   canvasSize: Dimensions;
+  loadNextStage: () => void;
+
   skyColor: Colors;
   terrain: Terrain;
 
@@ -35,6 +37,7 @@ export class Stage {
 
   constructor(
     canvasSize: Dimensions,
+    loadNextStage: () => void,
     skyColor: Colors,
     groundColor: Colors,
     enemyWalkingSpeedMultiplier: number,
@@ -47,6 +50,8 @@ export class Stage {
     spawnMinDistanceFromPlayer: number
   ) {
     this.canvasSize = canvasSize;
+    this.loadNextStage = loadNextStage;
+
     this.skyColor = skyColor;
     this.terrain = new Terrain(groundColor, [
       {
@@ -126,29 +131,39 @@ export class Stage {
 
     this.timeUntilNextSpawn -= deltaTime;
 
-    if (this.timeUntilNextSpawn <= 0 && this.spawnedKnights < knightsPerStage) {
-      this.timeUntilNextSpawn = randomFromRange(
-        ...this.spawnFrequencyRangeInMs
-      );
+    if (this.timeUntilNextSpawn <= 0) {
+      if (this.spawnedKnights < knightsPerStage) {
+        this.timeUntilNextSpawn = randomFromRange(
+          ...this.spawnFrequencyRangeInMs
+        );
 
-      const hb = this.player.getHitboxesOnScene().body;
+        const hb = this.player.getHitboxesOnScene().body;
 
-      let spaceLeft = hb.x - this.spawnMinDistanceFromPlayer;
-      spaceLeft = spaceLeft < 0 ? 0 : spaceLeft;
-      let spaceRight =
-        this.canvasSize.w - (hb.x + hb.w + this.spawnMinDistanceFromPlayer);
-      spaceRight = spaceRight < 0 ? 0 : spaceRight;
+        let spaceLeft = hb.x - this.spawnMinDistanceFromPlayer;
+        spaceLeft = spaceLeft < 0 ? 0 : spaceLeft;
+        let spaceRight =
+          this.canvasSize.w - (hb.x + hb.w + this.spawnMinDistanceFromPlayer);
+        spaceRight = spaceRight < 0 ? 0 : spaceRight;
 
-      const chosenSide = randomOneOfTwoWeighted(spaceLeft, spaceRight);
+        const chosenSide = randomOneOfTwoWeighted(spaceLeft, spaceRight);
 
-      let x = 0;
-      if (chosenSide === "l") {
-        x = randomFromRange(0, spaceLeft);
-      } else {
-        x = randomFromRange(this.canvasSize.w - spaceRight, this.canvasSize.w);
+        let x = 0;
+        if (chosenSide === "l") {
+          x = randomFromRange(0, spaceLeft);
+        } else {
+          x = randomFromRange(
+            this.canvasSize.w - spaceRight,
+            this.canvasSize.w
+          );
+        }
+
+        this.spawnKnight(x, randomBaseColor());
+      } else if (
+        this.spawnedKnights >= knightsPerStage &&
+        this.knightEnemies.length === 0
+      ) {
+        this.loadNextStage();
       }
-
-      this.spawnKnight(x, randomBaseColor());
     }
   }
 }
