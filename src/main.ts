@@ -1,8 +1,7 @@
 import { loadSpriteSheet } from "./assets/loadSpriteSheet";
 import { getGl } from "./helpers/rendering/getGl";
 import { glCreateTexture } from "./helpers/rendering/gl/glCreateTexture";
-import { spriteSheetData } from "./assets/spriteSheetData";
-import { colorKeys } from "./colors";
+import { colorKeys, colorVectors } from "./colors";
 import { TerrainProgram } from "./programs/TerrainProgram";
 import { CharacterProgram } from "./programs/CharacterProgram";
 import { Stage } from "./game/Stage";
@@ -46,21 +45,9 @@ async function main() {
     700,
     400,
     60,
-    50
-  );
-  currentStage.spawnEnemy(
-    spriteSheetData["enemy-knight 0.aseprite"],
-    spriteSheetData["enemy-knight 1.aseprite"],
-    100,
-    gl.canvas.height - 50,
-    colorKeys.red
-  );
-  currentStage.spawnEnemy(
-    spriteSheetData["enemy-knight 0.aseprite"],
-    spriteSheetData["enemy-knight 1.aseprite"],
-    200,
-    gl.canvas.height - 50,
-    colorKeys.yellow
+    50,
+    [5000, 6000],
+    gl.canvas.width / 6
   );
 
   let lastFrameTime = 0;
@@ -73,31 +60,21 @@ async function main() {
     const deltaTime = frameTime - lastFrameTime;
     lastFrameTime = frameTime;
 
-    currentStage.player.handleFrame(
-      deltaTime,
-      currentStage.terrain,
-      currentStage.enemies.map((e) => ({
-        hitbox: e.getHitboxesOnScene().body,
-        hit: (dmg: number) => e.getHit(dmg),
-        color: e.color,
-      }))
-    );
-    currentStage.enemies = currentStage.enemies.filter(
-      (enemy) => enemy.currentHp > 0
-    );
-    currentStage.enemies.forEach((enemy) => {
-      enemy.handleFrame(
-        deltaTime,
-        currentStage.player.getHitboxesOnScene().body,
-        (dmg: number) => currentStage.player.getHit(dmg)
-      );
-    });
+    currentStage.handleFrame(deltaTime);
 
     // gl.clearColor(0, 0, 0, 0);
     // gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
 
     terrainProgram.bindVao();
     terrainProgram.useProgram();
+
+    terrainProgram.drawTerrain({
+      x: 0,
+      y: 0,
+      w: currentStage.canvasSize.w,
+      h: currentStage.canvasSize.h,
+      color: colorVectors[currentStage.skyColor],
+    });
 
     currentStage.terrain.getDrawData().forEach((drawData) => {
       terrainProgram.drawTerrain(drawData);
@@ -106,7 +83,7 @@ async function main() {
     characterProgram.bindVao();
     characterProgram.useProgram();
 
-    currentStage.enemies.forEach((enemy) => {
+    currentStage.knightEnemies.forEach((enemy) => {
       characterProgram.drawCharacter(enemy.getDrawData());
     });
     characterProgram.drawCharacter(currentStage.player.getDrawData());

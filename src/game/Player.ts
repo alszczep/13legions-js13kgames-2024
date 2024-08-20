@@ -3,7 +3,10 @@ import { BaseColors, colorKeys, colorVectors } from "../colors";
 import { SPRITE_SIZE_MULTIPLIER } from "../consts";
 import { doHitboxesOverlap } from "../helpers/game/hitboxes";
 import { DrawCharacterParams } from "../programs/CharacterProgram";
-import { DimensionsAndCoordinates } from "../types/DimensionsAndCoordinates";
+import {
+  Dimensions,
+  DimensionsAndCoordinates,
+} from "../types/DimensionsAndCoordinates";
 import { Character } from "./Character";
 import { Terrain } from "./Terrain";
 
@@ -191,7 +194,8 @@ export class Player extends Character {
       hitbox: DimensionsAndCoordinates;
       hit: (dmg: number) => void;
       color: BaseColors;
-    }[]
+    }[],
+    canvasSize: Dimensions
   ): void {
     const hitboxes = this.getHitboxesOnScene();
 
@@ -234,11 +238,11 @@ export class Player extends Character {
       const moveDistance = deltaTime * this._walkingSpeedMultiplier;
       if (
         this._facing === "right" &&
-        hitboxes.body.x + hitboxes.body.w < terrain.skyRectangle.w
+        hitboxes.body.x + hitboxes.body.w < canvasSize.w
       ) {
         this.x += moveDistance;
       }
-      if (this._facing === "left" && hitboxes.body.x > terrain.skyRectangle.x) {
+      if (this._facing === "left" && hitboxes.body.x > 0) {
         this.x -= moveDistance;
       }
 

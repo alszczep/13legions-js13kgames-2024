@@ -1,4 +1,4 @@
-import { SpriteData } from "../assets/spriteSheetData";
+import { spriteSheetData } from "../assets/spriteSheetData";
 import { BaseColors, colorVectors } from "../colors";
 import { SPRITE_SIZE_MULTIPLIER } from "../consts";
 import {
@@ -15,7 +15,7 @@ type Hitboxes = {
   sword: DimensionsAndCoordinates;
 };
 
-export class Enemy extends Character {
+export class KnightEnemy extends Character {
   color: BaseColors;
 
   _attackTimeLeft?: number = undefined;
@@ -43,8 +43,6 @@ export class Enemy extends Character {
   _leftFacingHitboxes: Hitboxes = {} as Hitboxes;
 
   constructor(
-    spriteStanding: SpriteData,
-    spriteAttacking: SpriteData,
     x: number,
     y: number,
     color: BaseColors,
@@ -55,7 +53,14 @@ export class Enemy extends Character {
     maxHp: number,
     dmg: number
   ) {
-    super(spriteStanding, spriteAttacking, x, y, maxHp, dmg);
+    super(
+      spriteSheetData["enemy-knight 0.aseprite"],
+      spriteSheetData["enemy-knight 1.aseprite"],
+      x,
+      y,
+      maxHp,
+      dmg
+    );
 
     this._leftFacingHitboxes = {
       body: {
