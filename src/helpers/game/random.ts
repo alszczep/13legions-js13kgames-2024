@@ -8,11 +8,11 @@ export function randomBaseColor(): BaseColors {
   const r = Math.random();
 
   if (r < 1 / 3) {
-    return colorKeys.red;
+    return colorKeys.r;
   } else if (r < 2 / 3) {
-    return colorKeys.yellow;
+    return colorKeys.y;
   } else {
-    return colorKeys.blue;
+    return colorKeys.b;
   }
 }
 

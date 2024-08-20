@@ -7,6 +7,7 @@ import {
   Dimensions,
   DimensionsAndCoordinates,
 } from "../types/DimensionsAndCoordinates";
+import { LeftRight, UpDown } from "../types/Directions";
 import { Character } from "./Character";
 import { Terrain } from "./Terrain";
 
@@ -17,24 +18,24 @@ type Hitboxes = {
 };
 
 export class Player extends Character {
-  swordColor: BaseColors = "red";
+  swordColor: BaseColors = colorKeys.r;
 
-  _isAttackButtonPressed: boolean = false;
-  _attackTimeLeftInMs?: number = undefined;
+  isAttackButtonPressed: boolean = false;
+  attackTimeLeftInMs?: number = undefined;
 
-  _isMoving: boolean = false;
-  _movingTimeLeftInMs?: number = undefined;
+  isMoving: boolean = false;
+  movingTimeLeftInMs?: number = undefined;
 
-  _isMovingVertically?: "up" | "down" = undefined;
-  _jumpUpTimeLeftInMs?: number = undefined;
+  isMovingVertically?: UpDown = undefined;
+  jumpUpTimeLeftInMs?: number = undefined;
 
-  _walkingSpeedMultiplier = 0.25;
-  _attackTimeInMs = 200;
-  _moveTimePerClickInMs = 25;
-  _jumpUpTimeInMs = 225;
-  _jumpSpeedMultiplier = 0.75;
+  walkingSpeedMultiplier = 0.25;
+  attackTimeInMs = 200;
+  moveTimePerClickInMs = 25;
+  jumpUpTimeInMs = 225;
+  jumpSpeedMultiplier = 0.75;
 
-  _rightFacingHitboxes: Hitboxes = {
+  rightFacingHitboxes: Hitboxes = {
     body: {
       x: 11 * SPRITE_SIZE_MULTIPLIER,
       y: 0 * SPRITE_SIZE_MULTIPLIER,
@@ -54,7 +55,7 @@ export class Player extends Character {
       h: 2 * SPRITE_SIZE_MULTIPLIER,
     },
   };
-  _leftFacingHitboxes: Hitboxes = {} as Hitboxes;
+  leftFacingHitboxes: Hitboxes = {} as Hitboxes;
 
   constructor(x: number, y: number) {
     super(
@@ -66,25 +67,24 @@ export class Player extends Character {
       50
     );
 
-    this._leftFacingHitboxes = {
+    this.leftFacingHitboxes = {
       body: {
-        ...this._rightFacingHitboxes.body,
+        ...this.rightFacingHitboxes.body,
         x:
           this.spriteStanding.w -
-          (this._rightFacingHitboxes.body.x + this._rightFacingHitboxes.body.w),
+          (this.rightFacingHitboxes.body.x + this.rightFacingHitboxes.body.w),
       },
       sword: {
-        ...this._rightFacingHitboxes.sword,
+        ...this.rightFacingHitboxes.sword,
         x:
           this.spriteStanding.w -
-          (this._rightFacingHitboxes.sword.x +
-            this._rightFacingHitboxes.sword.w),
+          (this.rightFacingHitboxes.sword.x + this.rightFacingHitboxes.sword.w),
       },
       feet: {
-        ...this._rightFacingHitboxes.feet,
+        ...this.rightFacingHitboxes.feet,
         x:
           this.spriteStanding.w -
-          (this._rightFacingHitboxes.feet.x + this._rightFacingHitboxes.feet.w),
+          (this.rightFacingHitboxes.feet.x + this.rightFacingHitboxes.feet.w),
       },
     };
 
@@ -92,70 +92,70 @@ export class Player extends Character {
   }
 
   private _createEventListeners() {
-    const move = (direction: "left" | "right") => {
-      this._facing = direction;
-      this._isMoving = true;
-      this._movingTimeLeftInMs = this._moveTimePerClickInMs;
+    const move = (direction: LeftRight) => {
+      this.facing = direction;
+      this.isMoving = true;
+      this.movingTimeLeftInMs = this.moveTimePerClickInMs;
     };
 
     const attack = (color: BaseColors) => {
-      if (this._attackTimeLeftInMs !== undefined || this._isAttackButtonPressed)
+      if (this.attackTimeLeftInMs !== undefined || this.isAttackButtonPressed)
         return;
 
       this.swordColor = color;
-      this._attackTimeLeftInMs = this._attackTimeInMs;
-      this._isAttackButtonPressed = true;
+      this.attackTimeLeftInMs = this.attackTimeInMs;
+      this.isAttackButtonPressed = true;
     };
 
     window.addEventListener("keydown", (e) => {
       switch (e.key) {
         case "d":
-          move("right");
+          move(">");
           break;
         case "a":
-          move("left");
+          move("<");
           break;
         case "j":
-          attack("red");
+          attack(colorKeys.r);
           break;
         case "k":
-          attack("yellow");
+          attack(colorKeys.y);
           break;
         case "l":
-          attack("blue");
+          attack(colorKeys.b);
           break;
         case " ":
         case "w":
-          if (this._isMovingVertically) return;
-          this._isMovingVertically = "up";
-          this._jumpUpTimeLeftInMs = this._jumpUpTimeInMs;
+          if (this.isMovingVertically) return;
+          this.isMovingVertically = "^";
+          this.jumpUpTimeLeftInMs = this.jumpUpTimeInMs;
       }
     });
     window.addEventListener("keyup", (e) => {
       switch (e.key) {
         case "d":
-          if (this._isMoving && this._facing === "right") {
-            this._isMoving = false;
+          if (this.isMoving && this.facing === ">") {
+            this.isMoving = false;
           }
           break;
         case "a":
-          if (this._isMoving && this._facing === "left") {
-            this._isMoving = false;
+          if (this.isMoving && this.facing === "<") {
+            this.isMoving = false;
           }
           break;
         case "j":
-          if (this.swordColor === colorKeys.red) {
-            this._isAttackButtonPressed = false;
+          if (this.swordColor === colorKeys.r) {
+            this.isAttackButtonPressed = false;
           }
           break;
         case "k":
-          if (this.swordColor === colorKeys.yellow) {
-            this._isAttackButtonPressed = false;
+          if (this.swordColor === colorKeys.y) {
+            this.isAttackButtonPressed = false;
           }
           break;
         case "l":
-          if (this.swordColor === colorKeys.blue) {
-            this._isAttackButtonPressed = false;
+          if (this.swordColor === colorKeys.b) {
+            this.isAttackButtonPressed = false;
           }
           break;
       }
@@ -164,9 +164,7 @@ export class Player extends Character {
 
   getHitboxesOnScene(): Hitboxes {
     const hb =
-      this._facing === "right"
-        ? this._rightFacingHitboxes
-        : this._leftFacingHitboxes;
+      this.facing === ">" ? this.rightFacingHitboxes : this.leftFacingHitboxes;
 
     return {
       body: {
@@ -199,12 +197,12 @@ export class Player extends Character {
   ): void {
     const hitboxes = this.getHitboxesOnScene();
 
-    if (this._isMovingVertically) {
-      const moveDistance = deltaTime * this._jumpSpeedMultiplier;
-      if (this._isMovingVertically === "up") {
+    if (this.isMovingVertically) {
+      const moveDistance = deltaTime * this.jumpSpeedMultiplier;
+      if (this.isMovingVertically === "^") {
         this.y -= moveDistance;
       }
-      if (this._isMovingVertically === "down") {
+      if (this.isMovingVertically === "v") {
         const groundInReach = terrain.groundRectangles.find((r) => {
           const horizontal =
             r.x < hitboxes.feet.x + hitboxes.feet.w &&
@@ -218,35 +216,35 @@ export class Player extends Character {
 
         if (groundInReach) {
           this.y = groundInReach.y;
-          this._isMovingVertically = undefined;
+          this.isMovingVertically = undefined;
         } else {
           this.y += moveDistance;
         }
       }
 
-      if (this._jumpUpTimeLeftInMs !== undefined) {
-        if (this._jumpUpTimeLeftInMs <= 0) {
-          this._isMovingVertically = "down";
-          this._jumpUpTimeLeftInMs = undefined;
+      if (this.jumpUpTimeLeftInMs !== undefined) {
+        if (this.jumpUpTimeLeftInMs <= 0) {
+          this.isMovingVertically = "v";
+          this.jumpUpTimeLeftInMs = undefined;
         } else {
-          this._jumpUpTimeLeftInMs -= deltaTime;
+          this.jumpUpTimeLeftInMs -= deltaTime;
         }
       }
     }
 
-    if (this._movingTimeLeftInMs !== undefined) {
-      const moveDistance = deltaTime * this._walkingSpeedMultiplier;
+    if (this.movingTimeLeftInMs !== undefined) {
+      const moveDistance = deltaTime * this.walkingSpeedMultiplier;
       if (
-        this._facing === "right" &&
+        this.facing === ">" &&
         hitboxes.body.x + hitboxes.body.w < canvasSize.w
       ) {
         this.x += moveDistance;
       }
-      if (this._facing === "left" && hitboxes.body.x > 0) {
+      if (this.facing === "<" && hitboxes.body.x > 0) {
         this.x -= moveDistance;
       }
 
-      if (this._isMovingVertically === undefined) {
+      if (this.isMovingVertically === undefined) {
         const updatedHitboxes = this.getHitboxesOnScene();
         const groundInReach = terrain.groundRectangles.find((r) => {
           const horizontal =
@@ -259,23 +257,23 @@ export class Player extends Character {
         });
 
         if (!groundInReach) {
-          this._isMovingVertically = "down";
+          this.isMovingVertically = "v";
         }
       }
 
-      this._movingTimeLeftInMs -= deltaTime;
+      this.movingTimeLeftInMs -= deltaTime;
 
-      if (this._movingTimeLeftInMs <= 0) {
-        if (this._isMoving) {
-          this._movingTimeLeftInMs = this._moveTimePerClickInMs;
+      if (this.movingTimeLeftInMs <= 0) {
+        if (this.isMoving) {
+          this.movingTimeLeftInMs = this.moveTimePerClickInMs;
         } else {
-          this._movingTimeLeftInMs = undefined;
+          this.movingTimeLeftInMs = undefined;
         }
       }
     }
 
-    if (this._attackTimeLeftInMs !== undefined) {
-      if (this._attackTimeLeftInMs === this._attackTimeInMs) {
+    if (this.attackTimeLeftInMs !== undefined) {
+      if (this.attackTimeLeftInMs === this.attackTimeInMs) {
         enemies.forEach((e) => {
           if (
             doHitboxesOverlap(hitboxes.sword, e.hitbox) &&
@@ -286,17 +284,17 @@ export class Player extends Character {
         });
       }
 
-      this._attackTimeLeftInMs -= deltaTime;
+      this.attackTimeLeftInMs -= deltaTime;
 
-      if (this._attackTimeLeftInMs <= 0) {
-        this._attackTimeLeftInMs = undefined;
+      if (this.attackTimeLeftInMs <= 0) {
+        this.attackTimeLeftInMs = undefined;
       }
     }
   }
 
   getDrawData(): DrawCharacterParams {
     const sprite =
-      this._attackTimeLeftInMs !== undefined
+      this.attackTimeLeftInMs !== undefined
         ? this.spriteAttacking
         : this.spriteStanding;
 
@@ -307,7 +305,7 @@ export class Player extends Character {
       h: sprite.h,
       texCoords: sprite.texCoords,
       grayOffsetColor: colorVectors[this.swordColor],
-      flipX: this._facing === "left",
+      flipX: this.facing === "<",
     };
   }
 }

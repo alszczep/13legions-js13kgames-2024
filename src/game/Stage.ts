@@ -20,18 +20,18 @@ export class Stage {
   player: Player;
   knightEnemies: KnightEnemy[] = [];
 
-  _spawnedKnights: number = 0;
-  _timeUntilNextSpawn: number = 3000;
+  spawnedKnights: number = 0;
+  timeUntilNextSpawn: number = 3000;
 
-  _enemyWalkingSpeedMultiplier: number;
-  _enemyStandingTimeBeforeAttackInMs: number;
-  _enemyAttackTimeInMs: number;
-  _enemyAttackCooldownInMs: number;
-  _enemyMaxHp: number;
-  _enemyDmg: number;
+  enemyWalkingSpeedMultiplier: number;
+  enemyStandingTimeBeforeAttackInMs: number;
+  enemyAttackTimeInMs: number;
+  enemyAttackCooldownInMs: number;
+  enemyMaxHp: number;
+  enemyDmg: number;
 
-  _spawnFrequencyRangeInMs: [number, number];
-  _spawnMinDistanceFromPlayer: number;
+  spawnFrequencyRangeInMs: [number, number];
+  spawnMinDistanceFromPlayer: number;
 
   constructor(
     canvasSize: Dimensions,
@@ -74,30 +74,30 @@ export class Stage {
       canvasSize.h - TERRAIN_FLOOR_HEIGHT
     );
 
-    this._enemyWalkingSpeedMultiplier = enemyWalkingSpeedMultiplier;
-    this._enemyStandingTimeBeforeAttackInMs = enemyStandingTimeBeforeAttackInMs;
-    this._enemyAttackTimeInMs = enemyAttackTimeInMs;
-    this._enemyAttackCooldownInMs = enemyAttackCooldownInMs;
-    this._enemyMaxHp = enemyMaxHp;
-    this._enemyDmg = enemyDmg;
+    this.enemyWalkingSpeedMultiplier = enemyWalkingSpeedMultiplier;
+    this.enemyStandingTimeBeforeAttackInMs = enemyStandingTimeBeforeAttackInMs;
+    this.enemyAttackTimeInMs = enemyAttackTimeInMs;
+    this.enemyAttackCooldownInMs = enemyAttackCooldownInMs;
+    this.enemyMaxHp = enemyMaxHp;
+    this.enemyDmg = enemyDmg;
 
-    this._spawnFrequencyRangeInMs = spawnFrequencyRangeInMs;
-    this._spawnMinDistanceFromPlayer = spawnMinDistanceFromPlayer;
+    this.spawnFrequencyRangeInMs = spawnFrequencyRangeInMs;
+    this.spawnMinDistanceFromPlayer = spawnMinDistanceFromPlayer;
   }
 
   spawnKnight(x: number, color: BaseColors) {
-    this._spawnedKnights++;
+    this.spawnedKnights++;
     this.knightEnemies.push(
       new KnightEnemy(
         x,
         this.canvasSize.h - TERRAIN_FLOOR_HEIGHT,
         color,
-        this._enemyWalkingSpeedMultiplier,
-        this._enemyStandingTimeBeforeAttackInMs,
-        this._enemyAttackTimeInMs,
-        this._enemyAttackCooldownInMs,
-        this._enemyMaxHp,
-        this._enemyDmg
+        this.enemyWalkingSpeedMultiplier,
+        this.enemyStandingTimeBeforeAttackInMs,
+        this.enemyAttackTimeInMs,
+        this.enemyAttackCooldownInMs,
+        this.enemyMaxHp,
+        this.enemyDmg
       )
     );
   }
@@ -124,22 +124,19 @@ export class Stage {
       );
     });
 
-    this._timeUntilNextSpawn -= deltaTime;
+    this.timeUntilNextSpawn -= deltaTime;
 
-    if (
-      this._timeUntilNextSpawn <= 0 &&
-      this._spawnedKnights < knightsPerStage
-    ) {
-      this._timeUntilNextSpawn = randomFromRange(
-        ...this._spawnFrequencyRangeInMs
+    if (this.timeUntilNextSpawn <= 0 && this.spawnedKnights < knightsPerStage) {
+      this.timeUntilNextSpawn = randomFromRange(
+        ...this.spawnFrequencyRangeInMs
       );
 
       const hb = this.player.getHitboxesOnScene().body;
 
-      let spaceLeft = hb.x - this._spawnMinDistanceFromPlayer;
+      let spaceLeft = hb.x - this.spawnMinDistanceFromPlayer;
       spaceLeft = spaceLeft < 0 ? 0 : spaceLeft;
       let spaceRight =
-        this.canvasSize.w - (hb.x + hb.w + this._spawnMinDistanceFromPlayer);
+        this.canvasSize.w - (hb.x + hb.w + this.spawnMinDistanceFromPlayer);
       spaceRight = spaceRight < 0 ? 0 : spaceRight;
 
       const chosenSide = randomOneOfTwoWeighted(spaceLeft, spaceRight);

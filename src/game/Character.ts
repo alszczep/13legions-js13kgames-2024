@@ -1,6 +1,6 @@
 import { SpriteData } from "../assets/spriteSheetData";
 import { DrawCharacterParams } from "../programs/CharacterProgram";
-import { LeftRight } from "../types/LeftRight";
+import { LeftRight } from "../types/Directions";
 
 export abstract class Character {
   spriteStanding: SpriteData;
@@ -8,7 +8,7 @@ export abstract class Character {
 
   x: number;
   y: number;
-  _facing: LeftRight = "right";
+  facing: LeftRight = ">";
 
   currentHp: number;
   maxHp: number;

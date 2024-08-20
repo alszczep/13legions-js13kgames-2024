@@ -25,11 +25,11 @@ export class CharacterProgram extends Program<Attributes, Uniforms> {
   constructor(gl: WebGL2RenderingContext) {
     super(gl, characterVertexShader, characterFragmentShader);
 
-    this._saveAttributesLocations(["a_position", "a_texCoord"]);
-    this._saveUniformsLocations(["u_resolution", "u_image", "u_color"]);
+    this.saveAttributesLocations(["a_position", "a_texCoord"]);
+    this.saveUniformsLocations(["u_resolution", "u_image", "u_color"]);
   }
 
-  _configureAttributes(): void {
+  configureAttributes(): void {
     this.bindVao();
 
     const stride = 4 * FLOAT_SIZE_IN_BYTES;

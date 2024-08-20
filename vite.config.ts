@@ -1,5 +1,6 @@
 import { defineConfig } from "vite";
 import { ViteMinifyPlugin } from "vite-plugin-minify";
+import { checker } from "vite-plugin-checker";
 
 export default defineConfig({
   build: {
@@ -9,9 +10,7 @@ export default defineConfig({
         passes: 2,
       },
       mangle: {
-        properties: {
-          regex: /^[_#]/,
-        },
+        properties: true,
       },
     },
     rollupOptions: {
@@ -22,5 +21,10 @@ export default defineConfig({
       },
     },
   },
-  plugins: [ViteMinifyPlugin({})],
+  plugins: [
+    checker({
+      typescript: true,
+    }),
+    ViteMinifyPlugin({}),
+  ],
 });

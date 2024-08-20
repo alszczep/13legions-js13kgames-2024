@@ -22,11 +22,11 @@ export class TerrainProgram extends Program<Attributes, Uniforms> {
   constructor(gl: WebGL2RenderingContext) {
     super(gl, terrainVertexShader, terrainFragmentShader);
 
-    this._saveAttributesLocations(["a_position"]);
-    this._saveUniformsLocations(["u_resolution", "u_color"]);
+    this.saveAttributesLocations(["a_position"]);
+    this.saveUniformsLocations(["u_resolution", "u_color"]);
   }
 
-  _configureAttributes(): void {
+  configureAttributes(): void {
     this.bindVao();
 
     const stride = 2 * FLOAT_SIZE_IN_BYTES;
