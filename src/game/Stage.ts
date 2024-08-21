@@ -5,7 +5,11 @@ import {
   randomFromRange,
   randomOneOfTwoWeighted,
 } from "../helpers/game/random";
-import { Coordinates, Dimensions } from "../types/DimensionsAndCoordinates";
+import {
+  Coordinates,
+  Dimensions,
+  DimensionsAndCoordinates,
+} from "../types/DimensionsAndCoordinates";
 import { KnightEnemy } from "./KnightEnemy";
 import { Player } from "./Player";
 import { Terrain } from "./Terrain";
@@ -15,6 +19,9 @@ const knightsPerStage = 13;
 export class Stage {
   canvasSize: Dimensions;
   loadNextStage: (startingPlayerPosition: Coordinates) => void;
+
+  legionName: string;
+  stageName: string;
 
   skyColor: Colors;
   terrain: Terrain;
@@ -38,6 +45,8 @@ export class Stage {
   constructor({
     canvasSize,
     loadNextStage,
+    legionName,
+    stageName,
     skyColor,
     groundColor,
     enemyWalkingSpeedMultiplier,
@@ -49,9 +58,12 @@ export class Stage {
     spawnFrequencyRangeInMs,
     spawnMinDistanceFromPlayer,
     startingPlayerPosition,
+    terrain,
   }: {
     canvasSize: Dimensions;
     loadNextStage: (startingPlayerPosition: Coordinates) => void;
+    legionName: string;
+    stageName: string;
     skyColor: Colors;
     groundColor: Colors;
     enemyWalkingSpeedMultiplier: number;
@@ -63,9 +75,13 @@ export class Stage {
     spawnFrequencyRangeInMs: [number, number];
     spawnMinDistanceFromPlayer: number;
     startingPlayerPosition: Coordinates;
+    terrain: DimensionsAndCoordinates[];
   }) {
     this.canvasSize = canvasSize;
     this.loadNextStage = loadNextStage;
+
+    this.legionName = legionName;
+    this.stageName = stageName;
 
     this.skyColor = skyColor;
     this.terrain = new Terrain(groundColor, [
@@ -75,18 +91,7 @@ export class Stage {
         w: canvasSize.w,
         h: TERRAIN_FLOOR_HEIGHT,
       },
-      {
-        x: canvasSize.w / 6,
-        y: canvasSize.h - 175,
-        w: canvasSize.w / 6,
-        h: 25,
-      },
-      {
-        x: canvasSize.w - canvasSize.w / 3,
-        y: canvasSize.h - 175,
-        w: canvasSize.w / 6,
-        h: 25,
-      },
+      ...terrain,
     ]);
 
     this.player = new Player(

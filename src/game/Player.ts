@@ -18,6 +18,8 @@ type Hitboxes = {
 };
 
 export class Player extends Character {
+  onGameOver?: () => void;
+
   swordColor: BaseColors = colorKeys.r;
 
   isAttackButtonPressed: boolean = false;
@@ -107,7 +109,7 @@ export class Player extends Character {
       this.isAttackButtonPressed = true;
     };
 
-    window.addEventListener("keydown", (e) => {
+    const onKeyDown = (e: KeyboardEvent) => {
       switch (e.key) {
         case "d":
           move(">");
@@ -130,8 +132,9 @@ export class Player extends Character {
           this.isMovingVertically = "^";
           this.jumpUpTimeLeftInMs = this.jumpUpTimeInMs;
       }
-    });
-    window.addEventListener("keyup", (e) => {
+    };
+
+    const onKeyUp = (e: KeyboardEvent) => {
       switch (e.key) {
         case "d":
           if (this.isMoving && this.facing === ">") {
@@ -159,7 +162,15 @@ export class Player extends Character {
           }
           break;
       }
-    });
+    };
+
+    window.addEventListener("keydown", onKeyDown);
+    window.addEventListener("keyup", onKeyUp);
+
+    this.onGameOver = () => {
+      window.removeEventListener("keydown", onKeyDown);
+      window.removeEventListener("keyup", onKeyUp);
+    };
   }
 
   getHitboxesOnScene(): Hitboxes {

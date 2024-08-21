@@ -59,21 +59,19 @@ async function main() {
     w: gl.canvas.width,
     h: gl.canvas.height,
   });
+  textTexture.updateText("Legion Annihilated");
 
   let lastFrameTime = 0;
   function drawScene(frameTime: DOMHighResTimeStamp) {
     if (sm.currentStage.player.currentHp <= 0) {
-      // TODO: GAME OVER
-      return;
+      textTexture.updateText("You Died");
+      sm.currentStage.player.onGameOver?.();
     }
 
     const deltaTime = frameTime - lastFrameTime;
     lastFrameTime = frameTime;
 
     sm.currentStage.handleFrame(deltaTime);
-
-    // gl.clearColor(0, 0, 0, 0);
-    // gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
 
     terrainProgram.bindVao();
     terrainProgram.useProgram();
@@ -101,7 +99,6 @@ async function main() {
     textProgram.bindVao();
     textProgram.useProgram();
 
-    textTexture.updateText("Legion Annihilated");
     textProgram.drawText(textTexture);
 
     requestAnimationFrame(drawScene);
