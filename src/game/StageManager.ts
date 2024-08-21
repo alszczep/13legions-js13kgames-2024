@@ -1,4 +1,5 @@
-import { Dimensions } from "../types/DimensionsAndCoordinates";
+import { TERRAIN_FLOOR_HEIGHT } from "../consts";
+import { Coordinates, Dimensions } from "../types/DimensionsAndCoordinates";
 import { Stage } from "./Stage";
 import { mkStageDefinitions } from "./stageDefinitions";
 
@@ -10,11 +11,16 @@ export class StageManager {
 
   constructor(canvasSize: Dimensions) {
     this.stageDefinitions = mkStageDefinitions(canvasSize, this);
-    this.currentStage = this.stageDefinitions[this.currentStageIndex]();
+    this.currentStage = this.stageDefinitions[this.currentStageIndex]({
+      x: canvasSize.w / 2,
+      y: canvasSize.h - TERRAIN_FLOOR_HEIGHT,
+    });
   }
 
-  nextStage() {
+  nextStage(startingPlayerPosition: Coordinates) {
     this.currentStageIndex++;
-    this.currentStage = this.stageDefinitions[this.currentStageIndex]();
+    this.currentStage = this.stageDefinitions[this.currentStageIndex](
+      startingPlayerPosition
+    );
   }
 }

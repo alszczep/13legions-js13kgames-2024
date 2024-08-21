@@ -2,7 +2,7 @@ var newTextureId = 0;
 
 export function glCreateTexture(
   gl: WebGL2RenderingContext,
-  image: HTMLImageElement
+  image: HTMLImageElement | HTMLCanvasElement
 ) {
   const id = newTextureId;
   newTextureId++;

@@ -16,7 +16,7 @@ void main() {
 
    if (texColor.r == texColor.g && texColor.g == texColor.b && texColor.a != 0.0f) {
       // TODO: come up with something better
-      float color = texColor.r + (1.0f - texColor.r) * 0.6f;
+      float color = texColor.r + (1.0f - texColor.r) * 0.45f;
       outColor = vec4(color * ${characterShaderUniforms.u_color}, 1.0f);
    } else {
       outColor = texColor;

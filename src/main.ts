@@ -5,16 +5,26 @@ import { colorVectors } from "./colors";
 import { TerrainProgram } from "./programs/TerrainProgram";
 import { CharacterProgram } from "./programs/CharacterProgram";
 import { StageManager } from "./game/StageManager";
+import { TextTexture } from "./game/ui/TextTexture";
+import { TextProgram } from "./programs/TextProgram";
 
 async function main() {
-  const spriteSheet = await loadSpriteSheet();
-
   const gl = getGl();
+
+  const spriteSheet = await loadSpriteSheet();
+  const spriteSheetTexture = glCreateTexture(gl, spriteSheet);
+
+  const textTexture = new TextTexture(
+    {
+      w: gl.canvas.width,
+      h: gl.canvas.height,
+    },
+    gl
+  );
 
   const terrainProgram = new TerrainProgram(gl);
   const characterProgram = new CharacterProgram(gl);
-
-  const spriteSheetTexture = glCreateTexture(gl, spriteSheet);
+  const textProgram = new TextProgram(gl);
 
   terrainProgram.bindVao();
   terrainProgram.useProgram();
@@ -35,6 +45,15 @@ async function main() {
     characterProgram.uniformsLocations.u_image,
     spriteSheetTexture.id
   );
+
+  textProgram.bindVao();
+  textProgram.useProgram();
+  gl.uniform2f(
+    textProgram.uniformsLocations.u_resolution,
+    gl.canvas.width,
+    gl.canvas.height
+  );
+  gl.uniform1i(textProgram.uniformsLocations.u_image, textTexture.texture.id);
 
   const sm = new StageManager({
     w: gl.canvas.width,
@@ -78,6 +97,12 @@ async function main() {
       characterProgram.drawCharacter(enemy.getDrawData());
     });
     characterProgram.drawCharacter(sm.currentStage.player.getDrawData());
+
+    textProgram.bindVao();
+    textProgram.useProgram();
+
+    textTexture.updateText("Legion Annihilated");
+    textProgram.drawText(textTexture);
 
     requestAnimationFrame(drawScene);
   }

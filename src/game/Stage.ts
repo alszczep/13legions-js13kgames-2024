@@ -5,7 +5,7 @@ import {
   randomFromRange,
   randomOneOfTwoWeighted,
 } from "../helpers/game/random";
-import { Dimensions } from "../types/DimensionsAndCoordinates";
+import { Coordinates, Dimensions } from "../types/DimensionsAndCoordinates";
 import { KnightEnemy } from "./KnightEnemy";
 import { Player } from "./Player";
 import { Terrain } from "./Terrain";
@@ -14,7 +14,7 @@ const knightsPerStage = 13;
 
 export class Stage {
   canvasSize: Dimensions;
-  loadNextStage: () => void;
+  loadNextStage: (startingPlayerPosition: Coordinates) => void;
 
   skyColor: Colors;
   terrain: Terrain;
@@ -35,20 +35,35 @@ export class Stage {
   spawnFrequencyRangeInMs: [number, number];
   spawnMinDistanceFromPlayer: number;
 
-  constructor(
-    canvasSize: Dimensions,
-    loadNextStage: () => void,
-    skyColor: Colors,
-    groundColor: Colors,
-    enemyWalkingSpeedMultiplier: number,
-    enemyStandingTimeBeforeAttackInMs: number,
-    enemyAttackTimeInMs: number,
-    enemyAttackCooldownInMs: number,
-    enemyMaxHp: number,
-    enemyDmg: number,
-    spawnFrequencyRangeInMs: [number, number],
-    spawnMinDistanceFromPlayer: number
-  ) {
+  constructor({
+    canvasSize,
+    loadNextStage,
+    skyColor,
+    groundColor,
+    enemyWalkingSpeedMultiplier,
+    enemyStandingTimeBeforeAttackInMs,
+    enemyAttackTimeInMs,
+    enemyAttackCooldownInMs,
+    enemyMaxHp,
+    enemyDmg,
+    spawnFrequencyRangeInMs,
+    spawnMinDistanceFromPlayer,
+    startingPlayerPosition,
+  }: {
+    canvasSize: Dimensions;
+    loadNextStage: (startingPlayerPosition: Coordinates) => void;
+    skyColor: Colors;
+    groundColor: Colors;
+    enemyWalkingSpeedMultiplier: number;
+    enemyStandingTimeBeforeAttackInMs: number;
+    enemyAttackTimeInMs: number;
+    enemyAttackCooldownInMs: number;
+    enemyMaxHp: number;
+    enemyDmg: number;
+    spawnFrequencyRangeInMs: [number, number];
+    spawnMinDistanceFromPlayer: number;
+    startingPlayerPosition: Coordinates;
+  }) {
     this.canvasSize = canvasSize;
     this.loadNextStage = loadNextStage;
 
@@ -75,8 +90,8 @@ export class Stage {
     ]);
 
     this.player = new Player(
-      canvasSize.w / 2,
-      canvasSize.h - TERRAIN_FLOOR_HEIGHT
+      startingPlayerPosition.x,
+      startingPlayerPosition.y
     );
 
     this.enemyWalkingSpeedMultiplier = enemyWalkingSpeedMultiplier;
@@ -162,7 +177,7 @@ export class Stage {
         this.spawnedKnights >= knightsPerStage &&
         this.knightEnemies.length === 0
       ) {
-        this.loadNextStage();
+        this.loadNextStage({ x: this.player.x, y: this.player.y });
       }
     }
   }

@@ -72,8 +72,8 @@ export class CharacterProgram extends Program<Attributes, Uniforms> {
       {
         x,
         y,
-        w: w,
-        h: h,
+        w,
+        h,
       },
       { flipX }
     );
