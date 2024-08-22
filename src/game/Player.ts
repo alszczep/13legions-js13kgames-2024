@@ -112,9 +112,11 @@ export class Player extends Character {
     const onKeyDown = (e: KeyboardEvent) => {
       switch (e.key) {
         case "d":
+        case "ArrowRight":
           move(">");
           break;
         case "a":
+        case "ArrowLeft":
           move("<");
           break;
         case "j":
@@ -128,6 +130,7 @@ export class Player extends Character {
           break;
         case " ":
         case "w":
+        case "ArrowUp":
           if (this.isMovingVertically) return;
           this.isMovingVertically = "^";
           this.jumpUpTimeLeftInMs = this.jumpUpTimeInMs;
@@ -137,11 +140,13 @@ export class Player extends Character {
     const onKeyUp = (e: KeyboardEvent) => {
       switch (e.key) {
         case "d":
+        case "ArrowRight":
           if (this.isMoving && this.facing === ">") {
             this.isMoving = false;
           }
           break;
         case "a":
+        case "ArrowLeft":
           if (this.isMoving && this.facing === "<") {
             this.isMoving = false;
           }
