@@ -1,4 +1,4 @@
-import { GameDifficulty, StageModifiers } from "../types/GameDifficulty";
+import { GameDifficulty, StageModifiers } from "../../types/GameDifficulty";
 
 export const stageModifiersDefinitions: Record<GameDifficulty, StageModifiers> =
   {

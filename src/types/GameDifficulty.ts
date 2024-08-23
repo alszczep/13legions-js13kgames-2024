@@ -1,4 +1,4 @@
-import { type StageConstructor } from "../game/Stage";
+import { type StageConstructor } from "../game/stage/Stage";
 
 export type StageDefinition = Omit<
   StageConstructor,

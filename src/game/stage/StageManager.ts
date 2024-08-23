@@ -1,6 +1,6 @@
-import { TERRAIN_FLOOR_HEIGHT } from "../consts";
-import { Coordinates, Dimensions } from "../types/DimensionsAndCoordinates";
-import { StageModifiers } from "../types/GameDifficulty";
+import { TERRAIN_FLOOR_HEIGHT } from "../../consts";
+import { Coordinates, Dimensions } from "../../types/DimensionsAndCoordinates";
+import { StageModifiers } from "../../types/GameDifficulty";
 import { Stage } from "./Stage";
 import { mkStageDefinitions } from "./mkStageDefinitions";
 

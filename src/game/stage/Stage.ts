@@ -1,21 +1,21 @@
-import { BaseColors, Colors } from "../colors";
+import { BaseColors, Colors } from "../../colors";
 import {
   STAGE_START_AND_END_TIME_OFFSET_IN_MS,
   TERRAIN_FLOOR_HEIGHT,
-} from "../consts";
+} from "../../consts";
 import {
   randomBaseColor,
   randomFromRange,
   randomOneOfTwoWeighted,
-} from "../helpers/game/random";
+} from "../../helpers/game/random";
 import {
   Coordinates,
   Dimensions,
   DimensionsAndCoordinates,
-} from "../types/DimensionsAndCoordinates";
-import { KnightEnemy } from "./KnightEnemy";
-import { Player } from "./Player";
-import { Terrain } from "./Terrain";
+} from "../../types/DimensionsAndCoordinates";
+import { KnightEnemy } from "../KnightEnemy";
+import { Player } from "../Player";
+import { Terrain } from "../Terrain";
 
 const knightsPerStage = 13;
 export type StageConstructor = {

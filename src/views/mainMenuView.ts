@@ -1,4 +1,4 @@
-import { stageModifiersDefinitions } from "../game/stageModifiersDefinitions";
+import { stageModifiersDefinitions } from "../game/stage/stageModifiersDefinitions";
 import { GameDifficulty } from "../types/GameDifficulty";
 import { GameView } from "./gameView";
 
