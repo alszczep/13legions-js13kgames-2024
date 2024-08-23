@@ -1,7 +1,26 @@
 <!DOCTYPE html>
 <html>
   <body>
-    <div id="b">
+    <div id="a" class="f">
+      <div id="z">
+        Controls:
+        <div id="y">
+          <div>W, ArrowUp, Space</div>
+          <div>Jump</div>
+          <div>A, ArrowLeft</div>
+          <div>Move left</div>
+          <div>D, ArrowRight</div>
+          <div>Move right</div>
+          <div>J</div>
+          <div>Attack (Red Sword)</div>
+          <div>K</div>
+          <div>Attack (Yellow Sword)</div>
+          <div>L</div>
+          <div>Attack (Blue Sword)</div>
+        </div>
+      </div>
+    </div>
+    <div id="b" class="f">
       <div id="hp"></div>
       <canvas id="c" />
     </div>
@@ -9,23 +28,48 @@
     <style>
       * {
         box-sizing: border-box;
+        font-family: "Courier New", Courier, monospace;
+        color: #fff;
       }
 
       html,
       body {
         margin: 0;
+        background: #000;
+      }
+
+      html,
+      body,
+      .f {
         height: 100%;
         width: 100%;
-        background: #000;
-        font-family: "Courier New", Courier, monospace;
       }
-      #b {
+
+      .f {
         display: flex;
         flex-direction: column;
         align-items: center;
+      }
+
+      #a {
+        padding-top: 60px;
+      }
+
+      #b {
         justify-content: center;
-        width: 100%;
-        height: 100%;
+        display: none;
+      }
+
+      #z {
+        width: 500px;
+      }
+
+      #y {
+        padding-top: 30px;
+
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        grid-gap: 10px;
       }
     </style>
   </body>
