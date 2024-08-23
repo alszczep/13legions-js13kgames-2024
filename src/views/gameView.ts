@@ -4,7 +4,7 @@ import { glCreateTexture } from "../helpers/rendering/gl/glCreateTexture";
 import { colorVectors } from "../colors";
 import { TerrainProgram } from "../programs/TerrainProgram";
 import { CharacterProgram } from "../programs/CharacterProgram";
-import { StageManager } from "../game/StageManager";
+import { StageManager } from "../game/stage/StageManager";
 import { TextTexture } from "../game/ui/TextTexture";
 import { TextProgram } from "../programs/TextProgram";
 import { setupHpBar } from "../game/ui/setupHpBar";
@@ -77,6 +77,8 @@ export async function gameView({ stageModifiers }: GameView) {
     stageModifiers
   );
 
+  const startTime = performance.now();
+
   let lastFrameTime = 0;
   let gameOverHandled = false;
   function drawScene(frameTime: DOMHighResTimeStamp) {
@@ -127,7 +129,7 @@ export async function gameView({ stageModifiers }: GameView) {
 
     textProgram.drawText(textTexture);
 
-    requestAnimationFrame(drawScene);
+    requestAnimationFrame((t: DOMHighResTimeStamp) => drawScene(t - startTime));
   }
-  requestAnimationFrame(drawScene);
+  requestAnimationFrame((t: DOMHighResTimeStamp) => drawScene(t - startTime));
 }
