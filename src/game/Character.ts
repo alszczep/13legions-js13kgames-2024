@@ -32,7 +32,9 @@ export abstract class Character {
   }
 
   getHit(dmg: number) {
-    this.currentHp -= dmg;
+    if (this.currentHp > 0) {
+      this.currentHp -= dmg;
+    }
   }
 
   abstract getDrawData(): DrawCharacterParams;

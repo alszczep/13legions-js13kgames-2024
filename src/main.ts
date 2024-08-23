@@ -7,9 +7,11 @@ import { CharacterProgram } from "./programs/CharacterProgram";
 import { StageManager } from "./game/StageManager";
 import { TextTexture } from "./game/ui/TextTexture";
 import { TextProgram } from "./programs/TextProgram";
+import { setupHpBar } from "./game/ui/setupHpBar";
 
 async function main() {
   const gl = getGl();
+  setupHpBar(gl.canvas.width);
 
   const spriteSheet = await loadSpriteSheet();
   const spriteSheetTexture = glCreateTexture(gl, spriteSheet);

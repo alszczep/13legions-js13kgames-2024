@@ -10,6 +10,7 @@ import {
 import { LeftRight, UpDown } from "../types/Directions";
 import { Character } from "./Character";
 import { Terrain } from "./Terrain";
+import { updateHpBar } from "./ui/setupHpBar";
 
 type Hitboxes = {
   body: DimensionsAndCoordinates;
@@ -68,6 +69,8 @@ export class Player extends Character {
       1000,
       50
     );
+
+    updateHpBar(this.currentHp, this.maxHp);
 
     this.leftFacingHitboxes = {
       body: {
@@ -323,5 +326,9 @@ export class Player extends Character {
       grayOffsetColor: colorVectors[this.swordColor],
       flipX: this.facing === "<",
     };
+  }
+  getHit(dmg: number) {
+    super.getHit(dmg);
+    updateHpBar(this.currentHp, this.maxHp);
   }
 }
