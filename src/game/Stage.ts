@@ -18,6 +18,24 @@ import { Player } from "./Player";
 import { Terrain } from "./Terrain";
 
 const knightsPerStage = 13;
+export type StageConstructor = {
+  canvasSize: Dimensions;
+  loadNextStage: (startingPlayerPosition: Coordinates) => void;
+  legionName: string;
+  stageName: string;
+  skyColor: Colors;
+  groundColor: Colors;
+  enemyWalkingSpeedMultiplier: number;
+  enemyStandingTimeBeforeAttackInMs: number;
+  enemyAttackTimeInMs: number;
+  enemyAttackCooldownInMs: number;
+  enemyMaxHp: number;
+  enemyDmg: number;
+  spawnFrequencyRangeInMs: [number, number];
+  spawnMinDistanceFromPlayer: number;
+  startingPlayerPosition: Coordinates;
+  terrain: DimensionsAndCoordinates[];
+};
 
 export class Stage {
   canvasSize: Dimensions;
@@ -64,24 +82,7 @@ export class Stage {
     spawnMinDistanceFromPlayer,
     startingPlayerPosition,
     terrain,
-  }: {
-    canvasSize: Dimensions;
-    loadNextStage: (startingPlayerPosition: Coordinates) => void;
-    legionName: string;
-    stageName: string;
-    skyColor: Colors;
-    groundColor: Colors;
-    enemyWalkingSpeedMultiplier: number;
-    enemyStandingTimeBeforeAttackInMs: number;
-    enemyAttackTimeInMs: number;
-    enemyAttackCooldownInMs: number;
-    enemyMaxHp: number;
-    enemyDmg: number;
-    spawnFrequencyRangeInMs: [number, number];
-    spawnMinDistanceFromPlayer: number;
-    startingPlayerPosition: Coordinates;
-    terrain: DimensionsAndCoordinates[];
-  }) {
+  }: StageConstructor) {
     this.canvasSize = canvasSize;
     this.loadNextStage = loadNextStage;
 

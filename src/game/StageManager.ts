@@ -1,7 +1,8 @@
 import { TERRAIN_FLOOR_HEIGHT } from "../consts";
 import { Coordinates, Dimensions } from "../types/DimensionsAndCoordinates";
+import { StageModifiers } from "../types/GameDifficulty";
 import { Stage } from "./Stage";
-import { mkStageDefinitions } from "./stageDefinitions";
+import { mkStageDefinitions } from "./mkStageDefinitions";
 
 export class StageManager {
   currentStage: Stage;
@@ -13,9 +14,14 @@ export class StageManager {
 
   constructor(
     canvasSize: Dimensions,
-    animateText: (stageName: string, opt?: { keepShown?: boolean }) => void
+    animateText: (stageName: string, opt?: { keepShown?: boolean }) => void,
+    stageModifiers: StageModifiers
   ) {
-    this.stageDefinitions = mkStageDefinitions(canvasSize, this);
+    this.stageDefinitions = mkStageDefinitions(
+      canvasSize,
+      this,
+      stageModifiers
+    );
     this.currentStage = this.stageDefinitions[this.currentStageIndex]({
       x: canvasSize.w / 2,
       y: canvasSize.h - TERRAIN_FLOOR_HEIGHT,
