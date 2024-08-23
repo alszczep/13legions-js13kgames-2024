@@ -55,23 +55,38 @@ async function main() {
   );
   gl.uniform1i(textProgram.uniformsLocations.u_image, textTexture.texture.id);
 
-  const sm = new StageManager({
-    w: gl.canvas.width,
-    h: gl.canvas.height,
-  });
-  textTexture.updateText("Legion Annihilated");
+  const sm = new StageManager(
+    {
+      w: gl.canvas.width,
+      h: gl.canvas.height,
+    },
+    (stageName, opt) => {
+      textTexture.updateText(stageName);
+      textTexture.animate(opt);
+    }
+  );
 
   let lastFrameTime = 0;
+  let gameOverHandled = false;
   function drawScene(frameTime: DOMHighResTimeStamp) {
     if (sm.currentStage.player.currentHp <= 0) {
-      textTexture.updateText("You Died");
-      sm.currentStage.player.onGameOver?.();
+      if (!gameOverHandled) {
+        gameOverHandled = true;
+        textTexture.updateText("You Died");
+        textTexture.animate({ keepShown: true });
+        sm.currentStage.player.onGameOver?.();
+      }
     }
 
     const deltaTime = frameTime - lastFrameTime;
     lastFrameTime = frameTime;
 
-    sm.currentStage.handleFrame(deltaTime);
+    sm.currentStage.handleFrame(deltaTime, () => {
+      textTexture.updateText(`${sm.currentStage.legionName} Annihilated`);
+      textTexture.animate();
+    });
+
+    textTexture.handleFrame(deltaTime);
 
     terrainProgram.bindVao();
     terrainProgram.useProgram();

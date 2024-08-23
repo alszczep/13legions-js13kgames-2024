@@ -3,3 +3,6 @@ export const FLOAT_SIZE_IN_BYTES = 4;
 export const SPRITE_SIZE_MULTIPLIER = 4;
 
 export const TERRAIN_FLOOR_HEIGHT = 50;
+
+export const STAGE_START_AND_END_TIME_OFFSET_IN_MS = 5000;
+export const TOP_BAR_ANIMATION_TIME_IN_MS = 1000;

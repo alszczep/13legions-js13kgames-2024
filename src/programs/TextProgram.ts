@@ -50,7 +50,7 @@ export class TextProgram extends Program<Attributes, Uniforms> {
   drawText(textTexture: TextTexture) {
     const textPosition = dimensionsToRectangleVertices({
       x: 0,
-      y: 0,
+      y: textTexture.y,
       w: textTexture.ctx.canvas.width,
       h: textTexture.ctx.canvas.height,
     });

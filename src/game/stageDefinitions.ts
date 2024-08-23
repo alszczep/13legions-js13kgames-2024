@@ -19,7 +19,7 @@ export const mkStageDefinitions = (
       new Stage({
         ...baseArgs,
         legionName: "First Legion",
-        stageName: "First Legion of the First Stage",
+        stageName: "First Stage",
         skyColor: colorKeys.s1,
         groundColor: colorKeys.g1,
         enemyWalkingSpeedMultiplier: 0.2,
@@ -28,7 +28,7 @@ export const mkStageDefinitions = (
         enemyAttackCooldownInMs: 400,
         enemyMaxHp: 30,
         enemyDmg: 50,
-        spawnFrequencyRangeInMs: [500, 600],
+        spawnFrequencyRangeInMs: [100, 200],
         spawnMinDistanceFromPlayer: 200,
         startingPlayerPosition,
         terrain: [
@@ -50,7 +50,7 @@ export const mkStageDefinitions = (
       new Stage({
         ...baseArgs,
         legionName: "Second Legion",
-        stageName: "Second Legion of the Second Stage",
+        stageName: "Second Stage",
         skyColor: colorKeys.s2,
         groundColor: colorKeys.g2,
         enemyWalkingSpeedMultiplier: 0.2,
@@ -59,7 +59,7 @@ export const mkStageDefinitions = (
         enemyAttackCooldownInMs: 400,
         enemyMaxHp: 60,
         enemyDmg: 50,
-        spawnFrequencyRangeInMs: [5000, 6000],
+        spawnFrequencyRangeInMs: [100, 200],
         spawnMinDistanceFromPlayer: 200,
         startingPlayerPosition,
         terrain: [
