@@ -10,8 +10,8 @@ export abstract class Character {
   y: number;
   facing: LeftRight;
 
-  currentHp: number;
-  maxHp: number;
+  _currentHp: number;
+  _maxHp: number;
   dmg: number;
 
   constructor(
@@ -26,16 +26,16 @@ export abstract class Character {
     this.spriteAttacking = spriteAttacking;
     this.x = x;
     this.y = y;
-    this.currentHp = maxHp;
-    this.maxHp = maxHp;
+    this._currentHp = maxHp;
+    this._maxHp = maxHp;
     this.dmg = dmg;
 
     this.facing = ">";
   }
 
   getHit(dmg: number, _from: LeftRight) {
-    if (this.currentHp > 0) {
-      this.currentHp -= dmg;
+    if (this._currentHp > 0) {
+      this._currentHp -= dmg;
     }
   }
 

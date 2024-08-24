@@ -62,7 +62,7 @@ export class Player extends Character {
     this._jumpUpTimeInMs = 225;
     this._jumpSpeedMultiplier = 0.75;
 
-    updateHpBar(this.currentHp, this.maxHp);
+    updateHpBar(this._currentHp, this._maxHp);
 
     this._rightFacingHitboxes = {
       body: {
@@ -369,6 +369,6 @@ export class Player extends Character {
 
   getHit(dmg: number, from: LeftRight) {
     super.getHit(dmg, from);
-    updateHpBar(this.currentHp, this.maxHp);
+    updateHpBar(this._currentHp, this._maxHp);
   }
 }

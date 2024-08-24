@@ -31,8 +31,7 @@ exec(
         console.log(`${bestArgs.args}   -   ${bestArgs.size}`);
         writeFileSync(
             `${__dirname}/roadroller-args.sh`,
-            `#!/bin/bash \necho "${bestArgs.args}"
-            `);
+            `#!/bin/bash \necho "${bestArgs.args}"\n`);
         process.exit(0);
     });
 

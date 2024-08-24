@@ -93,7 +93,7 @@ export async function gameView({ stageModifiers }: GameView) {
     // TODO: comment out
     // stats.begin();
 
-    if (sm.currentStage.player.currentHp <= 0) {
+    if (sm.currentStage.player._currentHp <= 0) {
       if (!gameOverHandled) {
         gameOverHandled = true;
         textTexture.updateText("You Died");

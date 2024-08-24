@@ -41,7 +41,7 @@ export type StageConstructor = {
 
 export class Stage {
   canvasSize: Dimensions;
-  loadNextStage: (startingPlayerPosition: Coordinates) => void;
+  _loadNextStage: (startingPlayerPosition: Coordinates) => void;
 
   legionName: string;
   stageName: string;
@@ -52,20 +52,22 @@ export class Stage {
   player: Player;
   knightEnemies: KnightEnemy[];
 
-  spawnedKnights: number;
-  timeUntilNextSpawn: number;
+  _spawnedKnights: number;
+  _timeUntilNextSpawn: number;
 
-  enemyWalkingSpeedMultiplier: number;
-  enemyStandingTimeBeforeAttackInMs: number;
-  enemyAttackTimeInMs: number;
-  enemyAttackCooldownInMs: number;
-  enemyMaxHp: number;
-  enemyDmg: number;
+  _enemyWalkingSpeedMultiplier: number;
+  _enemyStandingTimeBeforeAttackInMs: number;
+  _enemyAttackTimeInMs: number;
+  _enemyAttackCooldownInMs: number;
+  _enemyMaxHp: number;
+  _enemyDmg: number;
 
-  spawnFrequencyRangeInMs: [number, number];
-  spawnMinDistanceFromPlayer: number;
+  _spawnFrequencyRangeInMs: [number, number];
+  _spawnMinDistanceFromPlayer: number;
 
-  nextLevelCooldown?: number;
+  _nextLevelCooldown?: number;
+
+  _nextStageLoaded;
 
   constructor({
     canvasSize,
@@ -86,14 +88,14 @@ export class Stage {
     terrain,
   }: StageConstructor) {
     this.canvasSize = canvasSize;
-    this.loadNextStage = loadNextStage;
+    this._loadNextStage = loadNextStage;
 
     this.legionName = legionName;
     this.stageName = stageName;
 
     this.knightEnemies = [];
-    this.spawnedKnights = 0;
-    this.timeUntilNextSpawn = STAGE_START_AND_END_TIME_OFFSET_IN_MS;
+    this._spawnedKnights = 0;
+    this._timeUntilNextSpawn = STAGE_START_AND_END_TIME_OFFSET_IN_MS;
 
     this.skyColor = skyColor;
     this.terrain = new Terrain(groundColor, [
@@ -111,30 +113,32 @@ export class Stage {
       startingPlayerPosition.y
     );
 
-    this.enemyWalkingSpeedMultiplier = enemyWalkingSpeedMultiplier;
-    this.enemyStandingTimeBeforeAttackInMs = enemyStandingTimeBeforeAttackInMs;
-    this.enemyAttackTimeInMs = enemyAttackTimeInMs;
-    this.enemyAttackCooldownInMs = enemyAttackCooldownInMs;
-    this.enemyMaxHp = enemyMaxHp;
-    this.enemyDmg = enemyDmg;
+    this._enemyWalkingSpeedMultiplier = enemyWalkingSpeedMultiplier;
+    this._enemyStandingTimeBeforeAttackInMs = enemyStandingTimeBeforeAttackInMs;
+    this._enemyAttackTimeInMs = enemyAttackTimeInMs;
+    this._enemyAttackCooldownInMs = enemyAttackCooldownInMs;
+    this._enemyMaxHp = enemyMaxHp;
+    this._enemyDmg = enemyDmg;
 
-    this.spawnFrequencyRangeInMs = spawnFrequencyRangeInMs;
-    this.spawnMinDistanceFromPlayer = spawnMinDistanceFromPlayer;
+    this._spawnFrequencyRangeInMs = spawnFrequencyRangeInMs;
+    this._spawnMinDistanceFromPlayer = spawnMinDistanceFromPlayer;
+
+    this._nextStageLoaded = false;
   }
 
   spawnKnight(x: number, color: BaseColors) {
-    this.spawnedKnights++;
+    this._spawnedKnights++;
     this.knightEnemies.push(
       new KnightEnemy(
         x,
         this.canvasSize.h - TERRAIN_FLOOR_HEIGHT,
         color,
-        this.enemyWalkingSpeedMultiplier,
-        this.enemyStandingTimeBeforeAttackInMs,
-        this.enemyAttackTimeInMs,
-        this.enemyAttackCooldownInMs,
-        this.enemyMaxHp,
-        this.enemyDmg
+        this._enemyWalkingSpeedMultiplier,
+        this._enemyStandingTimeBeforeAttackInMs,
+        this._enemyAttackTimeInMs,
+        this._enemyAttackCooldownInMs,
+        this._enemyMaxHp,
+        this._enemyDmg
       )
     );
   }
@@ -151,7 +155,7 @@ export class Stage {
       this.canvasSize
     );
     this.knightEnemies = this.knightEnemies.filter(
-      (enemy) => enemy.currentHp > 0
+      (enemy) => enemy._currentHp > 0
     );
     this.knightEnemies.forEach((enemy) => {
       enemy.handleFrame(
@@ -162,20 +166,20 @@ export class Stage {
       );
     });
 
-    this.timeUntilNextSpawn -= deltaTime;
+    this._timeUntilNextSpawn -= deltaTime;
 
-    if (this.timeUntilNextSpawn <= 0) {
-      if (this.spawnedKnights < knightsPerStage) {
-        this.timeUntilNextSpawn = randomFromRange(
-          ...this.spawnFrequencyRangeInMs
+    if (this._timeUntilNextSpawn <= 0) {
+      if (this._spawnedKnights < knightsPerStage) {
+        this._timeUntilNextSpawn = randomFromRange(
+          ...this._spawnFrequencyRangeInMs
         );
 
         const hb = this.player.getHitboxesOnScene().body;
 
-        let spaceLeft = hb.x - this.spawnMinDistanceFromPlayer;
+        let spaceLeft = hb.x - this._spawnMinDistanceFromPlayer;
         spaceLeft = spaceLeft < 0 ? 0 : spaceLeft;
         let spaceRight =
-          this.canvasSize.w - (hb.x + hb.w + this.spawnMinDistanceFromPlayer);
+          this.canvasSize.w - (hb.x + hb.w + this._spawnMinDistanceFromPlayer);
         spaceRight = spaceRight < 0 ? 0 : spaceRight;
 
         const chosenSide = randomOneOfTwoWeighted(spaceLeft, spaceRight);
@@ -194,19 +198,22 @@ export class Stage {
 
         this.spawnKnight(x, randomBaseColor());
       } else if (
-        this.spawnedKnights >= knightsPerStage &&
+        this._spawnedKnights >= knightsPerStage &&
         this.knightEnemies.length === 0 &&
-        this.nextLevelCooldown === undefined
+        this._nextLevelCooldown === undefined
       ) {
-        this.nextLevelCooldown = STAGE_START_AND_END_TIME_OFFSET_IN_MS;
+        this._nextLevelCooldown = STAGE_START_AND_END_TIME_OFFSET_IN_MS;
         animateStageEnd();
       }
     }
 
-    if (this.nextLevelCooldown !== undefined) {
-      this.nextLevelCooldown -= deltaTime;
-      if (this.nextLevelCooldown <= 0) {
-        this.loadNextStage({ x: this.player.x, y: this.player.y });
+    if (this._nextLevelCooldown !== undefined && !this._nextStageLoaded) {
+      this._nextLevelCooldown -= deltaTime;
+
+      if (this._nextLevelCooldown <= 0) {
+        this._loadNextStage({ x: this.player.x, y: this.player.y });
+        // needed for the last stage
+        this._nextStageLoaded = true;
       }
     }
   }
