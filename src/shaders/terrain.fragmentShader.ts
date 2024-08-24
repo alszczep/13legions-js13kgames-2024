@@ -7,6 +7,7 @@ uniform vec3 ${terrainShaderUniforms.u_color};
 uniform float ${terrainShaderUniforms.u_y};
 uniform float ${terrainShaderUniforms.u_h};
 uniform float ${terrainShaderUniforms.u_sky};
+uniform vec2 ${terrainShaderUniforms.u_resolution};
 
 out vec4 outColor;
 
@@ -28,10 +29,13 @@ void stripes(float d, float b, float o) {
 
 void main() {
    outColor = vec4(${terrainShaderUniforms.u_color}, 1.0f);
-
+   
    if(${terrainShaderUniforms.u_sky} == 1.0f) {
-      // sky
-      // outColor = outColor * 0.75f;
+      vec2 zeroToOneCoords = gl_FragCoord.xy / ${terrainShaderUniforms.u_resolution};
+      zeroToOneCoords = vec2(zeroToOneCoords.x, 1.0f - zeroToOneCoords.y);
+      
+      float brightness = sqrt(1.0f - distance(zeroToOneCoords, vec2(0.5f, 0.75f))) * 1.45f;
+      outColor = vec4(outColor.rgb * brightness, 1.0f);
    } else {
       if(higherThanPercentage(0.1f)) {
          solid(0.6f);

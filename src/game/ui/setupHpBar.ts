@@ -6,8 +6,8 @@ export function setupHpBar(canvasWidth: number) {
 
   container.style.width = `${canvasWidth}px`;
   container.style.height = "60px";
-  container.style.background = "#333";
-  container.style.padding = "10px";
+  container.style.background = "#222";
+  container.style.padding = "8px";
   container.style.position = "relative";
 
   const hpBarInner = document.createElement("div");

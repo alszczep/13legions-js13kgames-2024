@@ -10,7 +10,7 @@ import { TextProgram } from "../programs/TextProgram";
 import { setupHpBar } from "../game/ui/setupHpBar";
 import { StageModifiers } from "../types/GameDifficulty";
 // TODO: comment out
-import Stats from "stats-js";
+// import Stats from "stats-js";
 
 export type GameView = { stageModifiers: StageModifiers };
 
@@ -85,13 +85,13 @@ export async function gameView({ stageModifiers }: GameView) {
   let gameOverHandled = false;
 
   // TODO: comment out
-  var stats = new Stats();
-  stats.showPanel(0);
-  document.body.appendChild(stats.dom);
+  // var stats = new Stats();
+  // stats.showPanel(0);
+  // document.body.appendChild(stats.dom);
 
   function drawScene(frameTime: DOMHighResTimeStamp) {
     // TODO: comment out
-    stats.begin();
+    // stats.begin();
 
     if (sm.currentStage.player.currentHp <= 0) {
       if (!gameOverHandled) {
@@ -142,7 +142,7 @@ export async function gameView({ stageModifiers }: GameView) {
     textProgram.drawText(textTexture);
 
     // TODO: comment out
-    stats.end();
+    // stats.end();
     requestAnimationFrame((t: DOMHighResTimeStamp) => drawScene(t - startTime));
   }
   requestAnimationFrame((t: DOMHighResTimeStamp) => drawScene(t - startTime));
