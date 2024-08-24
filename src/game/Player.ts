@@ -278,23 +278,6 @@ export class Player extends Character {
         this.x -= moveDistance;
       }
 
-      if (this._isMovingVertically === undefined) {
-        const updatedHitboxes = this.getHitboxesOnScene();
-        const groundInReach = terrain._groundRectangles.find((r) => {
-          const horizontal =
-            r.x < updatedHitboxes.feet.x + updatedHitboxes.feet.w &&
-            r.x + r.w > updatedHitboxes.feet.x;
-          const vertical =
-            updatedHitboxes.feet.y + updatedHitboxes.feet.h === r.y;
-
-          return horizontal && vertical;
-        });
-
-        if (!groundInReach) {
-          this._isMovingVertically = "v";
-        }
-      }
-
       this._movingTimeLeftInMs -= deltaTime;
 
       if (this._movingTimeLeftInMs <= 0) {
@@ -303,6 +286,23 @@ export class Player extends Character {
         } else {
           this._movingTimeLeftInMs = undefined;
         }
+      }
+    }
+
+    if (this._isMovingVertically === undefined) {
+      const updatedHitboxes = this.getHitboxesOnScene();
+      const groundInReach = terrain._groundRectangles.find((r) => {
+        const horizontal =
+          r.x < updatedHitboxes.feet.x + updatedHitboxes.feet.w &&
+          r.x + r.w > updatedHitboxes.feet.x;
+        const vertical =
+          updatedHitboxes.feet.y + updatedHitboxes.feet.h === r.y;
+
+        return horizontal && vertical;
+      });
+
+      if (!groundInReach) {
+        this._isMovingVertically = "v";
       }
     }
 
