@@ -9,6 +9,8 @@ import { TextTexture } from "../game/ui/TextTexture";
 import { TextProgram } from "../programs/TextProgram";
 import { setupHpBar } from "../game/ui/setupHpBar";
 import { StageModifiers } from "../types/GameDifficulty";
+// TODO: comment out
+import Stats from "stats-js";
 
 export type GameView = { stageModifiers: StageModifiers };
 
@@ -81,7 +83,16 @@ export async function gameView({ stageModifiers }: GameView) {
 
   let lastFrameTime = 0;
   let gameOverHandled = false;
+
+  // TODO: comment out
+  var stats = new Stats();
+  stats.showPanel(0);
+  document.body.appendChild(stats.dom);
+
   function drawScene(frameTime: DOMHighResTimeStamp) {
+    // TODO: comment out
+    stats.begin();
+
     if (sm.currentStage.player.currentHp <= 0) {
       if (!gameOverHandled) {
         gameOverHandled = true;
@@ -110,6 +121,7 @@ export async function gameView({ stageModifiers }: GameView) {
       w: sm.currentStage.canvasSize.w,
       h: sm.currentStage.canvasSize.h,
       color: colorVectors[sm.currentStage.skyColor],
+      isSky: true,
     });
 
     sm.currentStage.terrain.getDrawData().forEach((drawData) => {
@@ -129,6 +141,8 @@ export async function gameView({ stageModifiers }: GameView) {
 
     textProgram.drawText(textTexture);
 
+    // TODO: comment out
+    stats.end();
     requestAnimationFrame((t: DOMHighResTimeStamp) => drawScene(t - startTime));
   }
   requestAnimationFrame((t: DOMHighResTimeStamp) => drawScene(t - startTime));

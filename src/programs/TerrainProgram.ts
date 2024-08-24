@@ -16,6 +16,7 @@ type Uniforms =
 
 export type DrawTerrainParams = {
   color: [number, number, number];
+  isSky?: boolean;
 } & DimensionsAndCoordinates;
 
 export class TerrainProgram extends Program<Attributes, Uniforms> {
@@ -23,7 +24,13 @@ export class TerrainProgram extends Program<Attributes, Uniforms> {
     super(gl, terrainVertexShader, terrainFragmentShader);
 
     this.saveAttributesLocations(["a_position"]);
-    this.saveUniformsLocations(["u_resolution", "u_color"]);
+    this.saveUniformsLocations([
+      "u_resolution",
+      "u_color",
+      "u_y",
+      "u_h",
+      "u_sky",
+    ]);
   }
 
   configureAttributes() {
@@ -42,8 +49,11 @@ export class TerrainProgram extends Program<Attributes, Uniforms> {
     );
   }
 
-  drawTerrain({ x, y, w, h, color }: DrawTerrainParams) {
+  drawTerrain({ x, y, w, h, color, isSky }: DrawTerrainParams) {
     this.gl.uniform3fv(this.uniformsLocations.u_color, new Float32Array(color));
+    this.gl.uniform1f(this.uniformsLocations.u_y, this.gl.canvas.height - y);
+    this.gl.uniform1f(this.uniformsLocations.u_h, h);
+    this.gl.uniform1f(this.uniformsLocations.u_sky, isSky ? 1 : 0);
 
     this.bindBuffer();
     this.gl.bufferData(
