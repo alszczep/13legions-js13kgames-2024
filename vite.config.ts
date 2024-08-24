@@ -10,7 +10,9 @@ export default defineConfig({
         passes: 2,
       },
       mangle: {
-        properties: true,
+        properties: {
+          regex: /^_/,
+        },
       },
     },
     rollupOptions: {

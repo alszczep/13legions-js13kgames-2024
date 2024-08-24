@@ -18,29 +18,16 @@ type Hitboxes = {
 export class KnightEnemy extends Character {
   color: BaseColors;
 
-  attackTimeLeft?: number = undefined;
-  attackCooldownLeft?: number = undefined;
+  _attackTimeLeft?: number;
+  _attackCooldownLeft?: number;
 
-  walkingSpeedMultiplier: number;
-  standingTimeBeforeAttackInMs: number;
-  attackTimeInMs: number;
-  attackCooldownInMs: number;
+  _walkingSpeedMultiplier: number;
+  _standingTimeBeforeAttackInMs: number;
+  _attackTimeInMs: number;
+  _attackCooldownInMs: number;
 
-  rightFacingHitboxes: Hitboxes = {
-    body: {
-      x: 8 * SPRITE_SIZE_MULTIPLIER,
-      y: 0 * SPRITE_SIZE_MULTIPLIER,
-      w: 11 * SPRITE_SIZE_MULTIPLIER,
-      h: 16 * SPRITE_SIZE_MULTIPLIER,
-    },
-    sword: {
-      x: 16 * SPRITE_SIZE_MULTIPLIER,
-      y: 0 * SPRITE_SIZE_MULTIPLIER,
-      w: 8 * SPRITE_SIZE_MULTIPLIER,
-      h: 10 * SPRITE_SIZE_MULTIPLIER,
-    },
-  };
-  leftFacingHitboxes: Hitboxes = {} as Hitboxes;
+  _rightFacingHitboxes: Hitboxes;
+  _leftFacingHitboxes: Hitboxes;
 
   constructor(
     x: number,
@@ -62,31 +49,48 @@ export class KnightEnemy extends Character {
       dmg
     );
 
-    this.leftFacingHitboxes = {
+    this._rightFacingHitboxes = {
       body: {
-        ...this.rightFacingHitboxes.body,
-        x:
-          this.spriteStanding.w -
-          (this.rightFacingHitboxes.body.x + this.rightFacingHitboxes.body.w),
+        x: 8 * SPRITE_SIZE_MULTIPLIER,
+        y: 0 * SPRITE_SIZE_MULTIPLIER,
+        w: 11 * SPRITE_SIZE_MULTIPLIER,
+        h: 16 * SPRITE_SIZE_MULTIPLIER,
       },
       sword: {
-        ...this.rightFacingHitboxes.sword,
+        x: 16 * SPRITE_SIZE_MULTIPLIER,
+        y: 0 * SPRITE_SIZE_MULTIPLIER,
+        w: 8 * SPRITE_SIZE_MULTIPLIER,
+        h: 10 * SPRITE_SIZE_MULTIPLIER,
+      },
+    };
+    this._leftFacingHitboxes = {
+      body: {
+        ...this._rightFacingHitboxes.body,
         x:
           this.spriteStanding.w -
-          (this.rightFacingHitboxes.sword.x + this.rightFacingHitboxes.sword.w),
+          (this._rightFacingHitboxes.body.x + this._rightFacingHitboxes.body.w),
+      },
+      sword: {
+        ...this._rightFacingHitboxes.sword,
+        x:
+          this.spriteStanding.w -
+          (this._rightFacingHitboxes.sword.x +
+            this._rightFacingHitboxes.sword.w),
       },
     };
 
     this.color = color;
-    this.walkingSpeedMultiplier = walkingSpeedMultiplier;
-    this.standingTimeBeforeAttackInMs = standingTimeBeforeAttackInMs;
-    this.attackTimeInMs = attackTimeInMs;
-    this.attackCooldownInMs = attackCooldownInMs;
+    this._walkingSpeedMultiplier = walkingSpeedMultiplier;
+    this._standingTimeBeforeAttackInMs = standingTimeBeforeAttackInMs;
+    this._attackTimeInMs = attackTimeInMs;
+    this._attackCooldownInMs = attackCooldownInMs;
   }
 
   getHitboxesOnScene(): Hitboxes {
     const hb =
-      this.facing === ">" ? this.rightFacingHitboxes : this.leftFacingHitboxes;
+      this.facing === ">"
+        ? this._rightFacingHitboxes
+        : this._leftFacingHitboxes;
 
     return {
       body: {
@@ -110,30 +114,30 @@ export class KnightEnemy extends Character {
     const hitboxes = this.getHitboxesOnScene();
 
     if (
-      this.attackTimeLeft === undefined &&
-      this.attackCooldownLeft === undefined
+      this._attackTimeLeft === undefined &&
+      this._attackCooldownLeft === undefined
     ) {
       if (isFirstHitboxToTheLeft(playerHitbox, hitboxes.sword)) {
         this.facing = "<";
-        this.x -= deltaTime * this.walkingSpeedMultiplier;
+        this.x -= deltaTime * this._walkingSpeedMultiplier;
       } else if (isFirstHitboxToTheRight(playerHitbox, hitboxes.sword)) {
         this.facing = ">";
-        this.x += deltaTime * this.walkingSpeedMultiplier;
+        this.x += deltaTime * this._walkingSpeedMultiplier;
       } else if (doHitboxesOverlap(playerHitbox, hitboxes.sword)) {
-        this.attackCooldownLeft = this.attackCooldownInMs;
+        this._attackCooldownLeft = this._attackCooldownInMs;
       }
-    } else if (this.attackTimeLeft !== undefined) {
-      this.attackTimeLeft -= deltaTime;
-      if (this.attackTimeLeft <= 0) {
-        this.attackTimeLeft = undefined;
+    } else if (this._attackTimeLeft !== undefined) {
+      this._attackTimeLeft -= deltaTime;
+      if (this._attackTimeLeft <= 0) {
+        this._attackTimeLeft = undefined;
       }
-    } else if (this.attackCooldownLeft !== undefined) {
-      this.attackCooldownLeft -= deltaTime;
-      if (this.attackCooldownLeft <= 0) {
-        this.attackCooldownLeft = undefined;
+    } else if (this._attackCooldownLeft !== undefined) {
+      this._attackCooldownLeft -= deltaTime;
+      if (this._attackCooldownLeft <= 0) {
+        this._attackCooldownLeft = undefined;
 
         if (doHitboxesOverlap(playerHitbox, hitboxes.sword)) {
-          this.attackTimeLeft = this.attackTimeInMs;
+          this._attackTimeLeft = this._attackTimeInMs;
           hitPlayer(this.dmg);
         }
       }
@@ -142,7 +146,7 @@ export class KnightEnemy extends Character {
 
   getDrawData(): DrawCharacterParams {
     const sprite =
-      this.attackTimeLeft !== undefined
+      this._attackTimeLeft !== undefined
         ? this.spriteAttacking
         : this.spriteStanding;
 

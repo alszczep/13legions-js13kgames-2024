@@ -6,41 +6,43 @@ import { mkStageDefinitions } from "./mkStageDefinitions";
 
 export class StageManager {
   currentStage: Stage;
-  currentStageIndex: number = 0;
+  _currentStageIndex: number;
 
-  stageDefinitions: ReturnType<typeof mkStageDefinitions>;
+  _stageDefinitions: ReturnType<typeof mkStageDefinitions>;
 
-  animateText: (stageName: string, opt?: { keepShown?: boolean }) => void;
+  _animateText: (stageName: string, opt?: { keepShown?: boolean }) => void;
 
   constructor(
     canvasSize: Dimensions,
     animateText: (stageName: string, opt?: { keepShown?: boolean }) => void,
     stageModifiers: StageModifiers
   ) {
-    this.stageDefinitions = mkStageDefinitions(
+    this._stageDefinitions = mkStageDefinitions(
       canvasSize,
       this,
       stageModifiers
     );
-    this.currentStage = this.stageDefinitions[this.currentStageIndex]({
+    this._currentStageIndex = 0;
+
+    this.currentStage = this._stageDefinitions[this._currentStageIndex]({
       x: canvasSize.w / 2,
       y: canvasSize.h - TERRAIN_FLOOR_HEIGHT,
     });
 
-    this.animateText = animateText;
-    this.animateText(this.currentStage.stageName);
+    this._animateText = animateText;
+    this._animateText(this.currentStage.stageName);
   }
 
   nextStage(startingPlayerPosition: Coordinates) {
-    this.currentStageIndex++;
+    this._currentStageIndex++;
 
-    if (this.stageDefinitions[this.currentStageIndex] === undefined) {
-      this.animateText("Victory", { keepShown: true });
+    if (this._stageDefinitions[this._currentStageIndex] === undefined) {
+      this._animateText("Victory", { keepShown: true });
     } else {
-      this.currentStage = this.stageDefinitions[this.currentStageIndex](
+      this.currentStage = this._stageDefinitions[this._currentStageIndex](
         startingPlayerPosition
       );
-      this.animateText(this.currentStage.stageName);
+      this._animateText(this.currentStage.stageName);
     }
   }
 }

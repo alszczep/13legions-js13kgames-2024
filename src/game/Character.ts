@@ -8,7 +8,7 @@ export abstract class Character {
 
   x: number;
   y: number;
-  facing: LeftRight = ">";
+  facing: LeftRight;
 
   currentHp: number;
   maxHp: number;
@@ -29,6 +29,8 @@ export abstract class Character {
     this.currentHp = maxHp;
     this.maxHp = maxHp;
     this.dmg = dmg;
+
+    this.facing = ">";
   }
 
   getHit(dmg: number) {

@@ -48,10 +48,10 @@ export class Stage {
   terrain: Terrain;
 
   player: Player;
-  knightEnemies: KnightEnemy[] = [];
+  knightEnemies: KnightEnemy[];
 
-  spawnedKnights: number = 0;
-  timeUntilNextSpawn: number = STAGE_START_AND_END_TIME_OFFSET_IN_MS;
+  spawnedKnights: number;
+  timeUntilNextSpawn: number;
 
   enemyWalkingSpeedMultiplier: number;
   enemyStandingTimeBeforeAttackInMs: number;
@@ -63,7 +63,7 @@ export class Stage {
   spawnFrequencyRangeInMs: [number, number];
   spawnMinDistanceFromPlayer: number;
 
-  nextLevelCooldown?: number = undefined;
+  nextLevelCooldown?: number;
 
   constructor({
     canvasSize,
@@ -88,6 +88,10 @@ export class Stage {
 
     this.legionName = legionName;
     this.stageName = stageName;
+
+    this.knightEnemies = [];
+    this.spawnedKnights = 0;
+    this.timeUntilNextSpawn = STAGE_START_AND_END_TIME_OFFSET_IN_MS;
 
     this.skyColor = skyColor;
     this.terrain = new Terrain(groundColor, [

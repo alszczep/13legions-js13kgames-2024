@@ -12,9 +12,9 @@ export class TextTexture {
 
   y: number;
 
-  animationTimeLeftInMs: number = 0;
-  animationState?: "v" | "shown" | "^" = undefined;
-  keepShown: boolean = false;
+  _animationTimeLeftInMs: number = 0;
+  _animationState?: "v" | "shown" | "^" = undefined;
+  _keepShown: boolean = false;
 
   constructor(gameCanvasSize: Dimensions, gl: WebGL2RenderingContext) {
     this.gl = gl;
@@ -72,29 +72,29 @@ export class TextTexture {
   }
 
   animate({ keepShown }: { keepShown?: boolean } = {}) {
-    this.animationTimeLeftInMs = TOP_BAR_ANIMATION_TIME_IN_MS;
-    this.animationState = "v";
+    this._animationTimeLeftInMs = TOP_BAR_ANIMATION_TIME_IN_MS;
+    this._animationState = "v";
 
     if (keepShown) {
-      this.keepShown = true;
+      this._keepShown = true;
     }
   }
 
   handleFrame(deltaTime: number) {
-    if (this.animationState === undefined) return;
+    if (this._animationState === undefined) return;
 
-    if (this.animationTimeLeftInMs > 0) {
-      this.animationTimeLeftInMs -= deltaTime;
+    if (this._animationTimeLeftInMs > 0) {
+      this._animationTimeLeftInMs -= deltaTime;
 
       const moveDistance = this.ctx.canvas.height * (deltaTime / 1000);
 
-      if (this.animationState === "v") {
+      if (this._animationState === "v") {
         if (this.y + moveDistance >= 0) {
           this.y = 0;
         } else {
           this.y += moveDistance;
         }
-      } else if (this.animationState === "^") {
+      } else if (this._animationState === "^") {
         if (this.y - moveDistance <= -this.ctx.canvas.height) {
           this.y = -this.ctx.canvas.height;
         } else {
@@ -103,21 +103,21 @@ export class TextTexture {
       }
     }
 
-    if (this.animationTimeLeftInMs <= 0) {
-      if (this.animationState === "v") {
-        if (this.keepShown) {
-          this.animationState = undefined;
+    if (this._animationTimeLeftInMs <= 0) {
+      if (this._animationState === "v") {
+        if (this._keepShown) {
+          this._animationState = undefined;
         } else {
-          this.animationState = "shown";
-          this.animationTimeLeftInMs =
+          this._animationState = "shown";
+          this._animationTimeLeftInMs =
             STAGE_START_AND_END_TIME_OFFSET_IN_MS -
             TOP_BAR_ANIMATION_TIME_IN_MS * 2;
         }
-      } else if (this.animationState === "shown") {
-        this.animationState = "^";
-        this.animationTimeLeftInMs = TOP_BAR_ANIMATION_TIME_IN_MS;
-      } else if (this.animationState === "^") {
-        this.animationState = undefined;
+      } else if (this._animationState === "shown") {
+        this._animationState = "^";
+        this._animationTimeLeftInMs = TOP_BAR_ANIMATION_TIME_IN_MS;
+      } else if (this._animationState === "^") {
+        this._animationState = undefined;
       }
     }
   }

@@ -8,8 +8,8 @@ export abstract class Program<
   vao: WebGLVertexArrayObject;
   program: WebGLProgram;
   buffer: WebGLBuffer;
-  attributesLocations: Record<TAttribute, number> = {} as any;
-  uniformsLocations: Record<TUniform, WebGLUniformLocation> = {} as any;
+  attributesLocations: Record<TAttribute, number>;
+  uniformsLocations: Record<TUniform, WebGLUniformLocation>;
 
   constructor(
     gl: WebGL2RenderingContext,
@@ -29,6 +29,9 @@ export abstract class Program<
 
     this.buffer = this.gl.createBuffer()!;
     this.bindBuffer();
+
+    this.attributesLocations = {} as any;
+    this.uniformsLocations = {} as any;
   }
 
   bindVao() {
