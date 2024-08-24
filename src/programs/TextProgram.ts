@@ -22,7 +22,7 @@ export class TextProgram extends Program<Attributes, Uniforms> {
     this.saveUniformsLocations(["u_resolution", "u_image"]);
   }
 
-  configureAttributes(): void {
+  configureAttributes() {
     this.bindVao();
 
     const stride = 4 * FLOAT_SIZE_IN_BYTES;

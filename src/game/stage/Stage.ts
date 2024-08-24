@@ -1,3 +1,4 @@
+import { spriteSheetData } from "../../assets/spriteSheetData";
 import { BaseColors, Colors } from "../../colors";
 import {
   STAGE_START_AND_END_TIME_OFFSET_IN_MS,
@@ -13,6 +14,7 @@ import {
   Dimensions,
   DimensionsAndCoordinates,
 } from "../../types/DimensionsAndCoordinates";
+import { LeftRight } from "../../types/Directions";
 import { KnightEnemy } from "../KnightEnemy";
 import { Player } from "../Player";
 import { Terrain } from "../Terrain";
@@ -143,7 +145,7 @@ export class Stage {
       this.terrain,
       this.knightEnemies.map((e) => ({
         hitbox: e.getHitboxesOnScene().body,
-        hit: (dmg: number) => e.getHit(dmg),
+        hit: (dmg: number, from: LeftRight) => e.getHit(dmg, from),
         color: e.color,
       })),
       this.canvasSize
@@ -155,7 +157,8 @@ export class Stage {
       enemy.handleFrame(
         deltaTime,
         this.player.getHitboxesOnScene().body,
-        (dmg: number) => this.player.getHit(dmg)
+        (dmg: number, from: LeftRight) => this.player.getHit(dmg, from),
+        this.canvasSize
       );
     });
 
@@ -182,8 +185,10 @@ export class Stage {
           x = randomFromRange(0, spaceLeft);
         } else {
           x = randomFromRange(
-            this.canvasSize.w - spaceRight,
-            this.canvasSize.w
+            this.canvasSize.w -
+              spaceRight -
+              spriteSheetData["enemy-knight 0.aseprite"].w,
+            this.canvasSize.w - spriteSheetData["enemy-knight 0.aseprite"].w
           );
         }
 

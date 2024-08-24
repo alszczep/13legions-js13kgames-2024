@@ -7,7 +7,7 @@ import {
   Dimensions,
   DimensionsAndCoordinates,
 } from "../types/DimensionsAndCoordinates";
-import { LeftRight, UpDown } from "../types/Directions";
+import { flipLeftRight, LeftRight, UpDown } from "../types/Directions";
 import { Character } from "./Character";
 import { Terrain } from "./Terrain";
 import { updateHpBar } from "./ui/setupHpBar";
@@ -308,7 +308,7 @@ export class Player extends Character {
     deltaTime: number,
     enemies: {
       hitbox: DimensionsAndCoordinates;
-      hit: (dmg: number) => void;
+      hit: (dmg: number, from: LeftRight) => void;
       color: BaseColors;
     }[]
   ) {
@@ -321,7 +321,7 @@ export class Player extends Character {
             doHitboxesOverlap(hitboxes.sword, e.hitbox) &&
             this._swordColor === e.color
           ) {
-            e.hit(this.dmg);
+            e.hit(this.dmg, flipLeftRight(this.facing));
           }
         });
       }
@@ -339,11 +339,11 @@ export class Player extends Character {
     terrain: Terrain,
     enemies: {
       hitbox: DimensionsAndCoordinates;
-      hit: (dmg: number) => void;
+      hit: (dmg: number, from: LeftRight) => void;
       color: BaseColors;
     }[],
     canvasSize: Dimensions
-  ): void {
+  ) {
     this._handleFrameJump(deltaTime, terrain);
     this._handleFrameMovement(deltaTime, canvasSize);
     this._handleFrameFalling(terrain);
@@ -367,8 +367,8 @@ export class Player extends Character {
     };
   }
 
-  getHit(dmg: number) {
-    super.getHit(dmg);
+  getHit(dmg: number, from: LeftRight) {
+    super.getHit(dmg, from);
     updateHpBar(this.currentHp, this.maxHp);
   }
 }

@@ -26,7 +26,7 @@ export class TerrainProgram extends Program<Attributes, Uniforms> {
     this.saveUniformsLocations(["u_resolution", "u_color"]);
   }
 
-  configureAttributes(): void {
+  configureAttributes() {
     this.bindVao();
 
     const stride = 2 * FLOAT_SIZE_IN_BYTES;

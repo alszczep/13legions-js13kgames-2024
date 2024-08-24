@@ -7,7 +7,11 @@ import {
   isFirstHitboxToTheRight,
 } from "../helpers/game/hitboxes";
 import { DrawCharacterParams } from "../programs/CharacterProgram";
-import { DimensionsAndCoordinates } from "../types/DimensionsAndCoordinates";
+import {
+  Dimensions,
+  DimensionsAndCoordinates,
+} from "../types/DimensionsAndCoordinates";
+import { flipLeftRight, LeftRight } from "../types/Directions";
 import { Character } from "./Character";
 
 type Hitboxes = {
@@ -18,13 +22,18 @@ type Hitboxes = {
 export class KnightEnemy extends Character {
   color: BaseColors;
 
-  _attackTimeLeft?: number;
-  _attackCooldownLeft?: number;
+  _attackTimeLeftInMs?: number;
+  _attackCooldownLeftInMs?: number;
 
   _walkingSpeedMultiplier: number;
   _standingTimeBeforeAttackInMs: number;
   _attackTimeInMs: number;
   _attackCooldownInMs: number;
+
+  _knockbackTimeInMs: number;
+  _knockbackTimeLeftInMs?: number;
+  _knockbackDirection?: LeftRight;
+  _knockbackSpeed: number;
 
   _rightFacingHitboxes: Hitboxes;
   _leftFacingHitboxes: Hitboxes;
@@ -84,6 +93,9 @@ export class KnightEnemy extends Character {
     this._standingTimeBeforeAttackInMs = standingTimeBeforeAttackInMs;
     this._attackTimeInMs = attackTimeInMs;
     this._attackCooldownInMs = attackCooldownInMs;
+
+    this._knockbackTimeInMs = 80;
+    this._knockbackSpeed = 1.5;
   }
 
   getHitboxesOnScene(): Hitboxes {
@@ -106,47 +118,89 @@ export class KnightEnemy extends Character {
     };
   }
 
-  handleFrame(
+  _handleFrameChaseAndAttack(
     deltaTime: number,
     playerHitbox: DimensionsAndCoordinates,
-    hitPlayer: (dmg: number) => void
-  ): void {
+    hitPlayer: (dmg: number, from: LeftRight) => void
+  ) {
     const hitboxes = this.getHitboxesOnScene();
 
+    if (this._knockbackTimeLeftInMs !== undefined) {
+      this._attackTimeLeftInMs = undefined;
+      this._attackCooldownLeftInMs = undefined;
+      return;
+    }
+
     if (
-      this._attackTimeLeft === undefined &&
-      this._attackCooldownLeft === undefined
+      this._attackTimeLeftInMs === undefined &&
+      this._attackCooldownLeftInMs === undefined
     ) {
+      const walkingDistance = deltaTime * this._walkingSpeedMultiplier;
+
       if (isFirstHitboxToTheLeft(playerHitbox, hitboxes.sword)) {
         this.facing = "<";
-        this.x -= deltaTime * this._walkingSpeedMultiplier;
+        this.x -= walkingDistance;
       } else if (isFirstHitboxToTheRight(playerHitbox, hitboxes.sword)) {
         this.facing = ">";
-        this.x += deltaTime * this._walkingSpeedMultiplier;
+        this.x += walkingDistance;
       } else if (doHitboxesOverlap(playerHitbox, hitboxes.sword)) {
-        this._attackCooldownLeft = this._attackCooldownInMs;
+        this._attackCooldownLeftInMs = this._attackCooldownInMs;
       }
-    } else if (this._attackTimeLeft !== undefined) {
-      this._attackTimeLeft -= deltaTime;
-      if (this._attackTimeLeft <= 0) {
-        this._attackTimeLeft = undefined;
+    } else if (this._attackTimeLeftInMs !== undefined) {
+      this._attackTimeLeftInMs -= deltaTime;
+      if (this._attackTimeLeftInMs <= 0) {
+        this._attackTimeLeftInMs = undefined;
       }
-    } else if (this._attackCooldownLeft !== undefined) {
-      this._attackCooldownLeft -= deltaTime;
-      if (this._attackCooldownLeft <= 0) {
-        this._attackCooldownLeft = undefined;
+    } else if (this._attackCooldownLeftInMs !== undefined) {
+      this._attackCooldownLeftInMs -= deltaTime;
+      if (this._attackCooldownLeftInMs <= 0) {
+        this._attackCooldownLeftInMs = undefined;
 
         if (doHitboxesOverlap(playerHitbox, hitboxes.sword)) {
-          this._attackTimeLeft = this._attackTimeInMs;
-          hitPlayer(this.dmg);
+          this._attackTimeLeftInMs = this._attackTimeInMs;
+          hitPlayer(this.dmg, flipLeftRight(this.facing));
         }
       }
     }
   }
 
+  _handleFrameKnockback(deltaTime: number, canvasSize: Dimensions) {
+    if (this._knockbackTimeLeftInMs !== undefined) {
+      this._knockbackTimeLeftInMs -= deltaTime;
+
+      const knockbackDistance = deltaTime * this._knockbackSpeed;
+
+      if (this._knockbackTimeLeftInMs <= 0) {
+        this._knockbackTimeLeftInMs = undefined;
+        this._knockbackDirection = undefined;
+      } else {
+        if (this._knockbackDirection === "<") {
+          this.x -= knockbackDistance;
+        } else {
+          this.x += knockbackDistance;
+        }
+      }
+
+      if (this.x < 0 || this.x + this.spriteStanding.w > canvasSize.w) {
+        this._knockbackTimeLeftInMs = undefined;
+        this._knockbackDirection = undefined;
+      }
+    }
+  }
+
+  handleFrame(
+    deltaTime: number,
+    playerHitbox: DimensionsAndCoordinates,
+    hitPlayer: (dmg: number, from: LeftRight) => void,
+    canvasSize: Dimensions
+  ) {
+    this._handleFrameChaseAndAttack(deltaTime, playerHitbox, hitPlayer);
+    this._handleFrameKnockback(deltaTime, canvasSize);
+  }
+
   getDrawData(): DrawCharacterParams {
     const sprite =
-      this._attackTimeLeft !== undefined
+      this._attackTimeLeftInMs !== undefined
         ? this.spriteAttacking
         : this.spriteStanding;
 
@@ -159,5 +213,12 @@ export class KnightEnemy extends Character {
       grayOffsetColor: colorVectors[this.color],
       flipX: this.facing === "<",
     };
+  }
+
+  getHit(dmg: number, from: LeftRight) {
+    super.getHit(dmg, from);
+
+    this._knockbackTimeLeftInMs = this._knockbackTimeInMs;
+    this._knockbackDirection = flipLeftRight(from);
   }
 }
