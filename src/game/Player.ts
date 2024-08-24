@@ -219,16 +219,7 @@ export class Player extends Character {
     };
   }
 
-  handleFrame(
-    deltaTime: number,
-    terrain: Terrain,
-    enemies: {
-      hitbox: DimensionsAndCoordinates;
-      hit: (dmg: number) => void;
-      color: BaseColors;
-    }[],
-    canvasSize: Dimensions
-  ): void {
+  _handleFrameJump(deltaTime: number, terrain: Terrain) {
     const hitboxes = this.getHitboxesOnScene();
 
     if (this._isMovingVertically) {
@@ -265,6 +256,10 @@ export class Player extends Character {
         }
       }
     }
+  }
+
+  _handleFrameMovement(deltaTime: number, canvasSize: Dimensions) {
+    const hitboxes = this.getHitboxesOnScene();
 
     if (this._movingTimeLeftInMs !== undefined) {
       const moveDistance = deltaTime * this._walkingSpeedMultiplier;
@@ -288,15 +283,17 @@ export class Player extends Character {
         }
       }
     }
+  }
+
+  _handleFrameFalling(terrain: Terrain) {
+    const hitboxes = this.getHitboxesOnScene();
 
     if (this._isMovingVertically === undefined) {
-      const updatedHitboxes = this.getHitboxesOnScene();
       const groundInReach = terrain._groundRectangles.find((r) => {
         const horizontal =
-          r.x < updatedHitboxes.feet.x + updatedHitboxes.feet.w &&
-          r.x + r.w > updatedHitboxes.feet.x;
-        const vertical =
-          updatedHitboxes.feet.y + updatedHitboxes.feet.h === r.y;
+          r.x < hitboxes.feet.x + hitboxes.feet.w &&
+          r.x + r.w > hitboxes.feet.x;
+        const vertical = hitboxes.feet.y + hitboxes.feet.h === r.y;
 
         return horizontal && vertical;
       });
@@ -305,6 +302,17 @@ export class Player extends Character {
         this._isMovingVertically = "v";
       }
     }
+  }
+
+  _handleFrameAttack(
+    deltaTime: number,
+    enemies: {
+      hitbox: DimensionsAndCoordinates;
+      hit: (dmg: number) => void;
+      color: BaseColors;
+    }[]
+  ) {
+    const hitboxes = this.getHitboxesOnScene();
 
     if (this._attackTimeLeftInMs !== undefined) {
       if (this._attackTimeLeftInMs === this._attackTimeInMs) {
@@ -326,6 +334,22 @@ export class Player extends Character {
     }
   }
 
+  handleFrame(
+    deltaTime: number,
+    terrain: Terrain,
+    enemies: {
+      hitbox: DimensionsAndCoordinates;
+      hit: (dmg: number) => void;
+      color: BaseColors;
+    }[],
+    canvasSize: Dimensions
+  ): void {
+    this._handleFrameJump(deltaTime, terrain);
+    this._handleFrameMovement(deltaTime, canvasSize);
+    this._handleFrameFalling(terrain);
+    this._handleFrameAttack(deltaTime, enemies);
+  }
+
   getDrawData(): DrawCharacterParams {
     const sprite =
       this._attackTimeLeftInMs !== undefined
@@ -342,6 +366,7 @@ export class Player extends Character {
       flipX: this.facing === "<",
     };
   }
+
   getHit(dmg: number) {
     super.getHit(dmg);
     updateHpBar(this.currentHp, this.maxHp);
