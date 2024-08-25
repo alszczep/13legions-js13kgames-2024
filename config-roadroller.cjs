@@ -1,7 +1,8 @@
 const { exec } = require('node:child_process');
 const { writeFileSync } = require('fs');
 
-const timeout = 60 * 1000;
+// pass seconds as argument
+const timeout = Number(process.argv[2]) * 1000;
 
 const logProgress = () => {
     let t = timeout;

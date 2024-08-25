@@ -3,7 +3,6 @@
 rm ./dist.zip
 rm -R ./dist
 
-ROADROLLER_ARGS=$(./roadroller-args.sh)
 
 npx tsc 
 npx vite build
@@ -14,10 +13,17 @@ npx html-minifier-terser --collapse-whitespace --remove-comments --minify-js tru
 cp ./index.min.html ./index.html
 rm ./index.min.html
 
+cd ..
+node ./config-roadroller.cjs 900
+ROADROLLER_ARGS=$(./roadroller-args.sh)
+cd ./dist/assets
+
 echo "Running roadroller with: ${ROADROLLER_ARGS}"
-npx roadroller ${ROADROLLER_ARGS} ./assets/index.js > ./assets/index.min.js
-cp ./assets/index.min.js ./assets/index.js
-rm ./assets/index.min.js
+npx roadroller ${ROADROLLER_ARGS} ./index.js > ./index.min.js
+cp ./index.min.js ./index.js
+rm ./index.min.js
+
+cd ..
 
 zip ../dist.zip index.html assets/*
 
