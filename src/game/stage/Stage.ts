@@ -189,10 +189,8 @@ export class Stage {
           x = randomFromRange(0, spaceLeft);
         } else {
           x = randomFromRange(
-            this.canvasSize.w -
-              spaceRight -
-              spriteSheetData["enemy-knight 0.aseprite"].w,
-            this.canvasSize.w - spriteSheetData["enemy-knight 0.aseprite"].w
+            this.canvasSize.w - spaceRight - spriteSheetData["ks"].w,
+            this.canvasSize.w - spriteSheetData["ks"].w
           );
         }
 

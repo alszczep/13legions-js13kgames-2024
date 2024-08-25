@@ -3,7 +3,7 @@ import { dimensionsToRectangleVertices } from "../helpers/rendering/dimensionsTo
 import { DimensionsAndCoordinates } from "../types/DimensionsAndCoordinates";
 import spriteSheetDataJson from "./spriteSheetData.json";
 
-type SpriteKeys = keyof typeof spriteSheetDataJson.frames;
+type SpriteKeys = keyof typeof spriteSheetDataJson.f;
 export type SpriteData = DimensionsAndCoordinates & {
   texCoords: number[];
 };
@@ -11,19 +11,19 @@ type SpriteSheetData = {
   [key in SpriteKeys]: SpriteData;
 };
 
-const spriteSheetSize = spriteSheetDataJson.meta.size;
+const spriteSheetSize = {
+  w: spriteSheetDataJson.w,
+  h: spriteSheetDataJson.h,
+};
 
-// TODO: do not import whole json
-export const spriteSheetData = Object.entries(
-  spriteSheetDataJson.frames
-).reduce(
-  (acc, [name, sprite]) => ({
+export const spriteSheetData = Object.entries(spriteSheetDataJson.f).reduce(
+  (acc, [name, frame]) => ({
     ...acc,
     [name]: {
-      ...sprite.frame,
-      w: sprite.frame.w * SPRITE_SIZE_MULTIPLIER,
-      h: sprite.frame.h * SPRITE_SIZE_MULTIPLIER,
-      texCoords: dimensionsToRectangleVertices(sprite.frame, {
+      ...frame,
+      w: frame.w * SPRITE_SIZE_MULTIPLIER,
+      h: frame.h * SPRITE_SIZE_MULTIPLIER,
+      texCoords: dimensionsToRectangleVertices(frame, {
         base: spriteSheetSize,
       }),
     },

@@ -8,6 +8,7 @@ export enum SoundEffect {
 }
 
 export function playSound(s: SoundEffect) {
+  // return;
   switch (s) {
     case SoundEffect.PlayerAttack:
       // prettier-ignore

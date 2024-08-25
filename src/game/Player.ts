@@ -43,14 +43,7 @@ export class Player extends Character {
   _leftFacingHitboxes: Hitboxes;
 
   constructor(x: number, y: number) {
-    super(
-      spriteSheetData["character-2 0.aseprite"],
-      spriteSheetData["character-2 1.aseprite"],
-      x,
-      y,
-      1000,
-      50
-    );
+    super(spriteSheetData["ps"], spriteSheetData["pa"], x, y, 1000, 50);
 
     this._swordColor = colorKeys.r;
 

@@ -50,20 +50,13 @@ export class KnightEnemy extends Character {
     maxHp: number,
     dmg: number
   ) {
-    super(
-      spriteSheetData["enemy-knight 0.aseprite"],
-      spriteSheetData["enemy-knight 1.aseprite"],
-      x,
-      y,
-      maxHp,
-      dmg
-    );
+    super(spriteSheetData["ks"], spriteSheetData["ka"], x, y, maxHp, dmg);
 
     this._rightFacingHitboxes = {
       body: {
         x: 8 * SPRITE_SIZE_MULTIPLIER,
         y: 0 * SPRITE_SIZE_MULTIPLIER,
-        w: 11 * SPRITE_SIZE_MULTIPLIER,
+        w: 12 * SPRITE_SIZE_MULTIPLIER,
         h: 16 * SPRITE_SIZE_MULTIPLIER,
       },
       sword: {
