@@ -1,4 +1,5 @@
-import { zzfx } from "zzfx";
+import { zzfx, ZZFX } from "zzfx";
+import { LeftRight } from "../types/Directions";
 
 export enum SoundEffect {
   PlayerAttack = 0,
@@ -7,8 +8,9 @@ export enum SoundEffect {
   Jump = 3,
 }
 
-export function playSound(s: SoundEffect) {
+export function playSound(s: SoundEffect, positionX?: LeftRight) {
   // return;
+  ZZFX.positionX = positionX === "<" ? -1 : positionX === ">" ? 1 : 0;
   switch (s) {
     case SoundEffect.PlayerAttack:
       // prettier-ignore

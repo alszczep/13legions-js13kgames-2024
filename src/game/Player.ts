@@ -315,7 +315,8 @@ export class Player extends Character {
         });
 
         playSound(
-          enemyHit ? SoundEffect.PlayerAttackHit : SoundEffect.PlayerAttack
+          enemyHit ? SoundEffect.PlayerAttackHit : SoundEffect.PlayerAttack,
+          this.facing
         );
       }
 
@@ -363,6 +364,6 @@ export class Player extends Character {
   getHit(dmg: number, from?: LeftRight) {
     super.getHit(dmg, from);
     updateHpBar(this._currentHp, this._maxHp);
-    playSound(SoundEffect.PlayerGotHit);
+    playSound(SoundEffect.PlayerGotHit, from);
   }
 }
