@@ -14,7 +14,7 @@ cp ./index.min.html ./index.html
 rm ./index.min.html
 
 cd ..
-node ./config-roadroller.cjs 900
+node ./config-roadroller.cjs 5
 ROADROLLER_ARGS=$(./roadroller-args.sh)
 cd ./dist/assets
 

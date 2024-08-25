@@ -7,3 +7,7 @@ declare module "stats-js" {
     dom: HTMLDivElement;
   }
 }
+
+declare module "zzfx" {
+  export function zzfx(...args: any[]): void;
+}

@@ -30,4 +30,10 @@ export default defineConfig({
     }),
     ViteMinifyPlugin({}),
   ],
+  server: {
+    watch: {
+      // use only with WSL
+      usePolling: true,
+    },
+  },
 });

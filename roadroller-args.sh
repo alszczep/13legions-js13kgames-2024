@@ -1,2 +1,2 @@
 #!/bin/bash 
-echo "-Zab30 -Zdy0 -Zlr813 -Zmc4 -Zmd42 -Zpr14 -S0,1,2,3,5,7,13,14,42,49,401,408"
+echo "-Zab32 -Zdy0 -Zlr750 -Zmc4 -Zmd32 -Zpr14 -S0,1,2,3,6,7,13,25,42,50,70,349"

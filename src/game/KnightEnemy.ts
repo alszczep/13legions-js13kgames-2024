@@ -104,17 +104,15 @@ export class KnightEnemy extends Character {
         ? this._rightFacingHitboxes
         : this._leftFacingHitboxes;
 
+    const mkHitbox = (hb: DimensionsAndCoordinates) => ({
+      ...hb,
+      x: this.x + hb.x,
+      y: this.y - this.spriteStanding.h + hb.y,
+    });
+
     return {
-      body: {
-        ...hb.body,
-        x: this.x + hb.body.x,
-        y: this.y - this.spriteStanding.h + hb.body.y,
-      },
-      sword: {
-        ...hb.sword,
-        x: this.x + hb.sword.x,
-        y: this.y - this.spriteStanding.h + hb.sword.y,
-      },
+      body: mkHitbox(hb.body),
+      sword: mkHitbox(hb.sword),
     };
   }
 

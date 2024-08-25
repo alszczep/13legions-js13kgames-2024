@@ -3,6 +3,7 @@ import { BaseColors, colorKeys, colorVectors } from "../colors";
 import { SPRITE_SIZE_MULTIPLIER } from "../consts";
 import { doHitboxesOverlap } from "../helpers/game/hitboxes";
 import { DrawCharacterParams } from "../programs/CharacterProgram";
+import { playSound, SoundEffect } from "../sound/playSound";
 import {
   Dimensions,
   DimensionsAndCoordinates,
@@ -150,6 +151,7 @@ export class Player extends Character {
           if (this._isMovingVertically) return;
           this._isMovingVertically = "^";
           this._jumpUpTimeLeftInMs = this._jumpUpTimeInMs;
+          playSound(SoundEffect.Jump);
       }
     };
 
@@ -200,22 +202,16 @@ export class Player extends Character {
         ? this._rightFacingHitboxes
         : this._leftFacingHitboxes;
 
+    const mkHitbox = (hb: DimensionsAndCoordinates) => ({
+      ...hb,
+      x: this.x + hb.x,
+      y: this.y - this.spriteStanding.h + hb.y,
+    });
+
     return {
-      body: {
-        ...hb.body,
-        x: this.x + hb.body.x,
-        y: this.y - this.spriteStanding.h + hb.body.y,
-      },
-      sword: {
-        ...hb.sword,
-        x: this.x + hb.sword.x,
-        y: this.y - this.spriteStanding.h + hb.sword.y,
-      },
-      feet: {
-        ...hb.feet,
-        x: this.x + hb.feet.x,
-        y: this.y - this.spriteStanding.h + hb.feet.y,
-      },
+      body: mkHitbox(hb.body),
+      sword: mkHitbox(hb.sword),
+      feet: mkHitbox(hb.feet),
     };
   }
 
@@ -226,8 +222,7 @@ export class Player extends Character {
       const moveDistance = deltaTime * this._jumpSpeedMultiplier;
       if (this._isMovingVertically === "^") {
         this.y -= moveDistance;
-      }
-      if (this._isMovingVertically === "v") {
+      } else if (this._isMovingVertically === "v") {
         const groundInReach = terrain._groundRectangles.find((r) => {
           const horizontal =
             r.x < hitboxes.feet.x + hitboxes.feet.w &&
@@ -276,11 +271,9 @@ export class Player extends Character {
       this._movingTimeLeftInMs -= deltaTime;
 
       if (this._movingTimeLeftInMs <= 0) {
-        if (this._isMoving) {
-          this._movingTimeLeftInMs = this._moveTimePerClickInMs;
-        } else {
-          this._movingTimeLeftInMs = undefined;
-        }
+        this._movingTimeLeftInMs = this._isMoving
+          ? this._moveTimePerClickInMs
+          : undefined;
       }
     }
   }
@@ -316,14 +309,21 @@ export class Player extends Character {
 
     if (this._attackTimeLeftInMs !== undefined) {
       if (this._attackTimeLeftInMs === this._attackTimeInMs) {
+        let enemyHit = false;
+
         enemies.forEach((e) => {
           if (
             doHitboxesOverlap(hitboxes.sword, e.hitbox) &&
             this._swordColor === e.color
           ) {
             e.hit(this.dmg, flipLeftRight(this.facing));
+            enemyHit = true;
           }
         });
+
+        playSound(
+          enemyHit ? SoundEffect.PlayerAttackHit : SoundEffect.PlayerAttack
+        );
       }
 
       this._attackTimeLeftInMs -= deltaTime;
@@ -370,5 +370,6 @@ export class Player extends Character {
   getHit(dmg: number, from: LeftRight) {
     super.getHit(dmg, from);
     updateHpBar(this._currentHp, this._maxHp);
+    playSound(SoundEffect.PlayerGotHit);
   }
 }
