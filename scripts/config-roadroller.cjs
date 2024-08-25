@@ -14,7 +14,7 @@ const logProgress = () => {
 logProgress();
 
 exec(
-    `node ${__dirname}/node_modules/roadroller/cli.mjs -OO -t js -M 512 ${__dirname}/dist/assets/index.js`,
+    `node ${__dirname}/../node_modules/roadroller/cli.mjs -OO -t js -M 512 ${__dirname}/../dist/assets/index.js`,
     { timeout, killSignal: 'SIGINT', maxBuffer: 1024 * 1024 * 32, shell: "/bin/bash" },
     (_, __, stderr) => {
         console.log(stderr);

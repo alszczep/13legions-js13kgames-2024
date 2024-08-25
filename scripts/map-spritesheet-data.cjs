@@ -1,6 +1,6 @@
 const { readFileSync, writeFileSync } = require('fs');
 
-const data = readFileSync(`${__dirname}/src/assets/spriteSheetData.json`);
+const data = readFileSync(`${__dirname}/../aseprite/spriteSheetData.json`);
 const parsedData = JSON.parse(data);
 
 const keysMap = {
@@ -27,4 +27,4 @@ const mappedData = {
     h: parsedData.meta.size.h,
 }
 
-writeFileSync(`${__dirname}/src/assets/spriteSheetData.json`, JSON.stringify(mappedData));
+writeFileSync(`${__dirname}/../aseprite/spriteSheetData.json`, JSON.stringify(mappedData));
