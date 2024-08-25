@@ -6,6 +6,7 @@ import {
   isFirstHitboxToTheLeft,
   isFirstHitboxToTheRight,
 } from "../helpers/game/hitboxes";
+import { randomFromRange } from "../helpers/game/random";
 import { DrawCharacterParams } from "../programs/CharacterProgram";
 import {
   Dimensions,
@@ -216,7 +217,10 @@ export class KnightEnemy extends Character {
   getHit(dmg: number, from: LeftRight) {
     super.getHit(dmg, from);
 
-    this._knockbackTimeLeftInMs = this._knockbackTimeInMs;
+    this._knockbackTimeLeftInMs = randomFromRange(
+      this._knockbackTimeInMs * 0.9,
+      this._knockbackTimeInMs * 1.1
+    );
     this._knockbackDirection = flipLeftRight(from);
   }
 }
