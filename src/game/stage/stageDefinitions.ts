@@ -30,6 +30,9 @@ export const stageDefinitions: ThirteenElements<StageDefinition> = [
         h: 25,
       },
     ],
+    rockSpawnFrequencyInMs: [5000, 7000],
+    rockDmg: 20,
+    rockFallingSpeed: 0.15,
   },
   {
     legionName: "Second Legion",
@@ -58,6 +61,9 @@ export const stageDefinitions: ThirteenElements<StageDefinition> = [
         h: 25,
       },
     ],
+    rockSpawnFrequencyInMs: [5000, 7000],
+    rockDmg: 20,
+    rockFallingSpeed: 0.15,
   },
   // TODO: add all
 ] as unknown as ThirteenElements<StageDefinition>;

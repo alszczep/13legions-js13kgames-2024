@@ -11,6 +11,9 @@ export const stageModifiersDefinitions: Record<GameDifficulty, StageModifiers> =
       enemyDmg: 1,
       spawnFrequencyRangeInMs: 1,
       spawnMinDistanceFromPlayer: 1,
+      rockSpawnFrequencyInMs: 1,
+      rockDmg: 1,
+      rockFallingSpeed: 1,
     },
     [GameDifficulty.Normal]: {
       enemyWalkingSpeedMultiplier: 1.05,
@@ -21,6 +24,9 @@ export const stageModifiersDefinitions: Record<GameDifficulty, StageModifiers> =
       enemyDmg: 1.2,
       spawnFrequencyRangeInMs: 0.95,
       spawnMinDistanceFromPlayer: 0.95,
+      rockSpawnFrequencyInMs: 0.95,
+      rockDmg: 1.2,
+      rockFallingSpeed: 1.1,
     },
     [GameDifficulty.Hard]: {
       enemyWalkingSpeedMultiplier: 1.1,
@@ -31,6 +37,9 @@ export const stageModifiersDefinitions: Record<GameDifficulty, StageModifiers> =
       enemyDmg: 1.4,
       spawnFrequencyRangeInMs: 0.9,
       spawnMinDistanceFromPlayer: 0.9,
+      rockSpawnFrequencyInMs: 0.9,
+      rockDmg: 1.4,
+      rockFallingSpeed: 1.2,
     },
     [GameDifficulty.Nightmare]: {
       enemyWalkingSpeedMultiplier: 1.2,
@@ -41,5 +50,8 @@ export const stageModifiersDefinitions: Record<GameDifficulty, StageModifiers> =
       enemyDmg: 1.6,
       spawnFrequencyRangeInMs: 0.85,
       spawnMinDistanceFromPlayer: 0.85,
+      rockSpawnFrequencyInMs: 0.85,
+      rockDmg: 1.6,
+      rockFallingSpeed: 1.3,
     },
   };

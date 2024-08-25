@@ -13,8 +13,11 @@ export type StageModifiers = Pick<
   | "enemyMaxHp"
   | "enemyDmg"
   | "spawnMinDistanceFromPlayer"
+  | "rockDmg"
+  | "rockFallingSpeed"
 > & {
   spawnFrequencyRangeInMs: number;
+  rockSpawnFrequencyInMs: number;
 };
 
 export enum GameDifficulty {

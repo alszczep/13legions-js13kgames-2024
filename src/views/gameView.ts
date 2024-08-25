@@ -135,6 +135,9 @@ export async function gameView({ stageModifiers }: GameView) {
       characterProgram.drawCharacter(enemy.getDrawData());
     });
     characterProgram.drawCharacter(sm.currentStage.player.getDrawData());
+    sm.currentStage.rocksMap.forEach((rock) => {
+      characterProgram.drawCharacter(rock.getDrawData());
+    });
 
     textProgram.bindVao();
     textProgram.useProgram();

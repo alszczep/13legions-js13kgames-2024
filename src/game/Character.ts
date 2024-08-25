@@ -33,7 +33,7 @@ export abstract class Character {
     this.facing = ">";
   }
 
-  getHit(dmg: number, _from: LeftRight) {
+  getHit(dmg: number, _from?: LeftRight) {
     if (this._currentHp > 0) {
       this._currentHp -= dmg;
     }

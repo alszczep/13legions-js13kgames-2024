@@ -360,7 +360,7 @@ export class Player extends Character {
     };
   }
 
-  getHit(dmg: number, from: LeftRight) {
+  getHit(dmg: number, from?: LeftRight) {
     super.getHit(dmg, from);
     updateHpBar(this._currentHp, this._maxHp);
     playSound(SoundEffect.PlayerGotHit);

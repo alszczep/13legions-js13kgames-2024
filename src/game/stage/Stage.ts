@@ -17,6 +17,7 @@ import {
 import { LeftRight } from "../../types/Directions";
 import { KnightEnemy } from "../KnightEnemy";
 import { Player } from "../Player";
+import { Rock } from "../Rock";
 import { Terrain } from "../Terrain";
 
 const knightsPerStage = 13;
@@ -37,6 +38,9 @@ export type StageConstructor = {
   spawnMinDistanceFromPlayer: number;
   startingPlayerPosition: Coordinates;
   terrain: DimensionsAndCoordinates[];
+  rockSpawnFrequencyInMs: [number, number];
+  rockDmg: number;
+  rockFallingSpeed: number;
 };
 
 export class Stage {
@@ -53,7 +57,7 @@ export class Stage {
   knightEnemies: KnightEnemy[];
 
   _spawnedKnights: number;
-  _timeUntilNextSpawn: number;
+  _timeUntilNextKnightSpawn: number;
 
   _enemyWalkingSpeedMultiplier: number;
   _enemyStandingTimeBeforeAttackInMs: number;
@@ -64,6 +68,12 @@ export class Stage {
 
   _spawnFrequencyRangeInMs: [number, number];
   _spawnMinDistanceFromPlayer: number;
+
+  _rockSpawnFrequencyInMs: [number, number];
+  _timeUntilNextRockSpawn: number;
+  _rockDmg: number;
+  _rockFallingSpeed: number;
+  rocksMap: Map<string, Rock>;
 
   _nextLevelCooldown?: number;
 
@@ -86,6 +96,9 @@ export class Stage {
     spawnMinDistanceFromPlayer,
     startingPlayerPosition,
     terrain,
+    rockSpawnFrequencyInMs,
+    rockDmg,
+    rockFallingSpeed,
   }: StageConstructor) {
     this.canvasSize = canvasSize;
     this._loadNextStage = loadNextStage;
@@ -95,7 +108,7 @@ export class Stage {
 
     this.knightEnemies = [];
     this._spawnedKnights = 0;
-    this._timeUntilNextSpawn = STAGE_START_AND_END_TIME_OFFSET_IN_MS;
+    this._timeUntilNextKnightSpawn = STAGE_START_AND_END_TIME_OFFSET_IN_MS;
 
     this.skyColor = skyColor;
     this.terrain = new Terrain(groundColor, [
@@ -123,6 +136,12 @@ export class Stage {
     this._spawnFrequencyRangeInMs = spawnFrequencyRangeInMs;
     this._spawnMinDistanceFromPlayer = spawnMinDistanceFromPlayer;
 
+    this._rockSpawnFrequencyInMs = rockSpawnFrequencyInMs;
+    this._timeUntilNextRockSpawn = STAGE_START_AND_END_TIME_OFFSET_IN_MS * 1.5;
+    this._rockDmg = rockDmg;
+    this._rockFallingSpeed = rockFallingSpeed;
+    this.rocksMap = new Map();
+
     this._nextStageLoaded = false;
   }
 
@@ -143,7 +162,7 @@ export class Stage {
     );
   }
 
-  handleFrame(deltaTime: number, animateStageEnd: () => void) {
+  _handleCharactersFrames(deltaTime: number) {
     this.player.handleFrame(
       deltaTime,
       this.terrain,
@@ -165,44 +184,79 @@ export class Stage {
         this.canvasSize
       );
     });
+    this.rocksMap.forEach((rock) => {
+      rock.handleFrame(
+        deltaTime,
+        this.player.getHitboxesOnScene().body,
+        (dmg: number) => this.player.getHit(dmg),
+        this.canvasSize
+      );
+    });
+  }
 
-    this._timeUntilNextSpawn -= deltaTime;
+  _handleKnightsSpawn(deltaTime: number) {
+    this._timeUntilNextKnightSpawn -= deltaTime;
 
-    if (this._timeUntilNextSpawn <= 0) {
-      if (this._spawnedKnights < knightsPerStage) {
-        this._timeUntilNextSpawn = randomFromRange(
-          ...this._spawnFrequencyRangeInMs
+    if (
+      this._timeUntilNextKnightSpawn <= 0 &&
+      this._spawnedKnights < knightsPerStage
+    ) {
+      this._timeUntilNextKnightSpawn = randomFromRange(
+        ...this._spawnFrequencyRangeInMs
+      );
+
+      const hb = this.player.getHitboxesOnScene().body;
+
+      let spaceLeft = hb.x - this._spawnMinDistanceFromPlayer;
+      spaceLeft = spaceLeft < 0 ? 0 : spaceLeft;
+      let spaceRight =
+        this.canvasSize.w - (hb.x + hb.w + this._spawnMinDistanceFromPlayer);
+      spaceRight = spaceRight < 0 ? 0 : spaceRight;
+
+      const chosenSide = randomOneOfTwoWeighted(spaceLeft, spaceRight);
+
+      let x = 0;
+      if (chosenSide === "l") {
+        x = randomFromRange(0, spaceLeft);
+      } else {
+        x = randomFromRange(
+          this.canvasSize.w - spaceRight - spriteSheetData["ks"].w,
+          this.canvasSize.w - spriteSheetData["ks"].w
         );
-
-        const hb = this.player.getHitboxesOnScene().body;
-
-        let spaceLeft = hb.x - this._spawnMinDistanceFromPlayer;
-        spaceLeft = spaceLeft < 0 ? 0 : spaceLeft;
-        let spaceRight =
-          this.canvasSize.w - (hb.x + hb.w + this._spawnMinDistanceFromPlayer);
-        spaceRight = spaceRight < 0 ? 0 : spaceRight;
-
-        const chosenSide = randomOneOfTwoWeighted(spaceLeft, spaceRight);
-
-        let x = 0;
-        if (chosenSide === "l") {
-          x = randomFromRange(0, spaceLeft);
-        } else {
-          x = randomFromRange(
-            this.canvasSize.w - spaceRight - spriteSheetData["ks"].w,
-            this.canvasSize.w - spriteSheetData["ks"].w
-          );
-        }
-
-        this.spawnKnight(x, randomBaseColor());
-      } else if (
-        this._spawnedKnights >= knightsPerStage &&
-        this.knightEnemies.length === 0 &&
-        this._nextLevelCooldown === undefined
-      ) {
-        this._nextLevelCooldown = STAGE_START_AND_END_TIME_OFFSET_IN_MS;
-        animateStageEnd();
       }
+
+      this.spawnKnight(x, randomBaseColor());
+    }
+  }
+
+  _handleRocksSpawn(deltaTime: number) {
+    this._timeUntilNextRockSpawn -= deltaTime;
+
+    if (this._timeUntilNextRockSpawn <= 0) {
+      this._timeUntilNextRockSpawn = randomFromRange(
+        ...this._rockSpawnFrequencyInMs
+      );
+
+      const x = randomFromRange(0, this.canvasSize.w - spriteSheetData["r"].w);
+      const spawnTimestamp = performance.now().toString();
+
+      const rock = new Rock(x, 0, this._rockDmg, this._rockFallingSpeed, () => {
+        this.rocksMap.delete(spawnTimestamp);
+      });
+
+      this.rocksMap.set(spawnTimestamp, rock);
+    }
+  }
+
+  _handleNextLevelCooldown(deltaTime: number, animateStageEnd: () => void) {
+    if (
+      this._timeUntilNextKnightSpawn <= 0 &&
+      this._spawnedKnights >= knightsPerStage &&
+      this.knightEnemies.length === 0 &&
+      this._nextLevelCooldown === undefined
+    ) {
+      this._nextLevelCooldown = STAGE_START_AND_END_TIME_OFFSET_IN_MS;
+      animateStageEnd();
     }
 
     if (this._nextLevelCooldown !== undefined && !this._nextStageLoaded) {
@@ -214,5 +268,12 @@ export class Stage {
         this._nextStageLoaded = true;
       }
     }
+  }
+
+  handleFrame(deltaTime: number, animateStageEnd: () => void) {
+    this._handleCharactersFrames(deltaTime);
+    this._handleKnightsSpawn(deltaTime);
+    this._handleRocksSpawn(deltaTime);
+    this._handleNextLevelCooldown(deltaTime, animateStageEnd);
   }
 }
