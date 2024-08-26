@@ -38,17 +38,17 @@ void main() {
       outColor = vec4(outColor.rgb * brightness, 1.0f);
    } else {
       if(higherThanPercentage(0.1f)) {
-         solid(0.6f);
+         solid(0.5f);
       } else if(higherThanPercentage(0.2f)) {
-         stripes(0.6f, 0.75f, 0.0f);
+         stripes(0.5f, 0.65f, 0.0f);
       } else if(higherThanPercentage(0.3f)) {
-         solid(0.75f);
+         solid(0.65f);
       } else if(higherThanPercentage(0.4f)) {
-         stripes(0.75f, 0.85f, 1.75f);
+         stripes(0.65f, 0.80f, 1.75f);
       } else if(higherThanPercentage(0.5f)) {
-         solid(0.85f);
+         solid(0.80f);
       } else if(higherThanPercentage(0.6f)) {
-         stripes(0.85f, 0.90f, 0.0f);
+         stripes(0.80f, 0.90f, 0.0f);
       } else if(higherThanPercentage(0.7f)) {
          solid(0.90f);
       } else if(higherThanPercentage(0.8f)) {

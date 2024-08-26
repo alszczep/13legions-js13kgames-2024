@@ -27,9 +27,6 @@ export const mkStageDefinitions = (
         enemyWalkingSpeedMultiplier:
           definition.enemyWalkingSpeedMultiplier *
           stageModifiers.enemyWalkingSpeedMultiplier,
-        enemyStandingTimeBeforeAttackInMs:
-          definition.enemyStandingTimeBeforeAttackInMs *
-          stageModifiers.enemyStandingTimeBeforeAttackInMs,
         enemyAttackTimeInMs:
           definition.enemyAttackTimeInMs * stageModifiers.enemyAttackTimeInMs,
         enemyAttackCooldownInMs:

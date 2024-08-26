@@ -7,7 +7,6 @@ export type StageDefinition = Omit<
 export type StageModifiers = Pick<
   StageDefinition,
   | "enemyWalkingSpeedMultiplier"
-  | "enemyStandingTimeBeforeAttackInMs"
   | "enemyAttackTimeInMs"
   | "enemyAttackCooldownInMs"
   | "enemyMaxHp"

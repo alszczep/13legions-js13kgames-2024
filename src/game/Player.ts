@@ -186,6 +186,8 @@ export class Player extends Character {
     this.onGameOver = () => {
       window.removeEventListener("keydown", onKeyDown);
       window.removeEventListener("keyup", onKeyUp);
+      this._isMoving = false;
+      this._isAttackButtonPressed = false;
     };
   }
 

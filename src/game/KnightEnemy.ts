@@ -27,7 +27,6 @@ export class KnightEnemy extends Character {
   _attackCooldownLeftInMs?: number;
 
   _walkingSpeedMultiplier: number;
-  _standingTimeBeforeAttackInMs: number;
   _attackTimeInMs: number;
   _attackCooldownInMs: number;
 
@@ -44,7 +43,6 @@ export class KnightEnemy extends Character {
     y: number,
     color: BaseColors,
     walkingSpeedMultiplier: number,
-    standingTimeBeforeAttackInMs: number,
     attackTimeInMs: number,
     attackCooldownInMs: number,
     maxHp: number,
@@ -84,7 +82,6 @@ export class KnightEnemy extends Character {
 
     this.color = color;
     this._walkingSpeedMultiplier = walkingSpeedMultiplier;
-    this._standingTimeBeforeAttackInMs = standingTimeBeforeAttackInMs;
     this._attackTimeInMs = attackTimeInMs;
     this._attackCooldownInMs = attackCooldownInMs;
 

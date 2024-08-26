@@ -21,6 +21,7 @@ import { Rock } from "../Rock";
 import { Terrain } from "../Terrain";
 
 const knightsPerStage = 13;
+
 export type StageConstructor = {
   canvasSize: Dimensions;
   loadNextStage: (startingPlayerPosition: Coordinates) => void;
@@ -29,7 +30,6 @@ export type StageConstructor = {
   skyColor: Colors;
   groundColor: Colors;
   enemyWalkingSpeedMultiplier: number;
-  enemyStandingTimeBeforeAttackInMs: number;
   enemyAttackTimeInMs: number;
   enemyAttackCooldownInMs: number;
   enemyMaxHp: number;
@@ -60,7 +60,6 @@ export class Stage {
   _timeUntilNextKnightSpawn: number;
 
   _enemyWalkingSpeedMultiplier: number;
-  _enemyStandingTimeBeforeAttackInMs: number;
   _enemyAttackTimeInMs: number;
   _enemyAttackCooldownInMs: number;
   _enemyMaxHp: number;
@@ -87,7 +86,6 @@ export class Stage {
     skyColor,
     groundColor,
     enemyWalkingSpeedMultiplier,
-    enemyStandingTimeBeforeAttackInMs,
     enemyAttackTimeInMs,
     enemyAttackCooldownInMs,
     enemyMaxHp,
@@ -127,7 +125,6 @@ export class Stage {
     );
 
     this._enemyWalkingSpeedMultiplier = enemyWalkingSpeedMultiplier;
-    this._enemyStandingTimeBeforeAttackInMs = enemyStandingTimeBeforeAttackInMs;
     this._enemyAttackTimeInMs = enemyAttackTimeInMs;
     this._enemyAttackCooldownInMs = enemyAttackCooldownInMs;
     this._enemyMaxHp = enemyMaxHp;
@@ -153,7 +150,6 @@ export class Stage {
         this.canvasSize.h - TERRAIN_FLOOR_HEIGHT,
         color,
         this._enemyWalkingSpeedMultiplier,
-        this._enemyStandingTimeBeforeAttackInMs,
         this._enemyAttackTimeInMs,
         this._enemyAttackCooldownInMs,
         this._enemyMaxHp,
@@ -232,7 +228,7 @@ export class Stage {
   _handleRocksSpawn(deltaTime: number) {
     this._timeUntilNextRockSpawn -= deltaTime;
 
-    if (this._timeUntilNextRockSpawn <= 0) {
+    if (this._timeUntilNextRockSpawn <= 0 && !this._nextStageLoaded) {
       this._timeUntilNextRockSpawn = randomFromRange(
         ...this._rockSpawnFrequencyInMs
       );

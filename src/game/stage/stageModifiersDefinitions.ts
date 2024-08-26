@@ -4,7 +4,6 @@ export const stageModifiersDefinitions: Record<GameDifficulty, StageModifiers> =
   {
     [GameDifficulty.Easy]: {
       enemyWalkingSpeedMultiplier: 1,
-      enemyStandingTimeBeforeAttackInMs: 1,
       enemyAttackTimeInMs: 1,
       enemyAttackCooldownInMs: 1,
       enemyMaxHp: 1,
@@ -17,7 +16,6 @@ export const stageModifiersDefinitions: Record<GameDifficulty, StageModifiers> =
     },
     [GameDifficulty.Normal]: {
       enemyWalkingSpeedMultiplier: 1.05,
-      enemyStandingTimeBeforeAttackInMs: 0.95,
       enemyAttackTimeInMs: 0.9,
       enemyAttackCooldownInMs: 0.9,
       enemyMaxHp: 1.2,
@@ -30,7 +28,6 @@ export const stageModifiersDefinitions: Record<GameDifficulty, StageModifiers> =
     },
     [GameDifficulty.Hard]: {
       enemyWalkingSpeedMultiplier: 1.1,
-      enemyStandingTimeBeforeAttackInMs: 0.9,
       enemyAttackTimeInMs: 0.85,
       enemyAttackCooldownInMs: 0.8,
       enemyMaxHp: 1.4,
@@ -43,7 +40,6 @@ export const stageModifiersDefinitions: Record<GameDifficulty, StageModifiers> =
     },
     [GameDifficulty.Nightmare]: {
       enemyWalkingSpeedMultiplier: 1.2,
-      enemyStandingTimeBeforeAttackInMs: 0.8,
       enemyAttackTimeInMs: 0.8,
       enemyAttackCooldownInMs: 0.7,
       enemyMaxHp: 1.6,

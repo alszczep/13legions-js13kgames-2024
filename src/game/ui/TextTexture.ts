@@ -30,7 +30,7 @@ export class TextTexture {
     this.ctx.fillStyle = "#FFFFFF";
     this.ctx.textAlign = "center";
     this.ctx.textBaseline = "middle";
-    this.ctx.font = "50px 'Courier New'";
+    this.ctx.font = "bold 34px 'Courier New'";
     this.ctx.shadowColor = "#000000";
 
     this.texture = glCreateTexture(gl, canvas);
