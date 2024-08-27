@@ -283,7 +283,7 @@ export const stageDefinitions: ThirteenElements<StageDefinition> = [
     enemyAttackTimeInMs: 1000,
     enemyAttackCooldownInMs: 250,
     enemyMaxHp: 280,
-    enemyDmg: 180,
+    enemyDmg: 150,
     spawnFrequencyRangeInMs: [500, 800],
     spawnMinDistanceFromPlayer: 400,
     terrain: [
