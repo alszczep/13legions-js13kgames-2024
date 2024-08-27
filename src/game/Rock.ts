@@ -53,7 +53,16 @@ export class Rock {
       return;
     }
 
-    if (doHitboxesOverlap(this.getHitboxesOnScene(), playerHitbox)) {
+    const hitboxes = this.getHitboxesOnScene();
+    // its to easy to bump into the rock
+    const adjustedHitboxes = {
+      ...hitboxes,
+      x: hitboxes.x + hitboxes.w * 0.05,
+      y: hitboxes.y + hitboxes.h * 0.2,
+      w: hitboxes.w * 0.9,
+      h: hitboxes.h * 0.8,
+    };
+    if (doHitboxesOverlap(adjustedHitboxes, playerHitbox)) {
       hitPlayer(this.dmg);
       this._deleteSelf();
     }

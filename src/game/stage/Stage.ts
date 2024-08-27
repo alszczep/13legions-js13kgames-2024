@@ -134,7 +134,7 @@ export class Stage {
     this._spawnMinDistanceFromPlayer = spawnMinDistanceFromPlayer;
 
     this._rockSpawnFrequencyInMs = rockSpawnFrequencyInMs;
-    this._timeUntilNextRockSpawn = STAGE_START_AND_END_TIME_OFFSET_IN_MS * 1.5;
+    this._timeUntilNextRockSpawn = STAGE_START_AND_END_TIME_OFFSET_IN_MS * 1.2;
     this._rockDmg = rockDmg;
     this._rockFallingSpeed = rockFallingSpeed;
     this.rocksMap = new Map();

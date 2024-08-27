@@ -43,6 +43,15 @@ export const mkStageDefinitions = (
         spawnMinDistanceFromPlayer:
           definition.spawnMinDistanceFromPlayer *
           stageModifiers.spawnMinDistanceFromPlayer,
+        rockSpawnFrequencyInMs: [
+          definition.rockSpawnFrequencyInMs[0] *
+            stageModifiers.rockSpawnFrequencyInMs,
+          definition.rockSpawnFrequencyInMs[1] *
+            stageModifiers.rockSpawnFrequencyInMs,
+        ],
+        rockDmg: definition.rockDmg * stageModifiers.rockDmg,
+        rockFallingSpeed:
+          definition.rockFallingSpeed * stageModifiers.rockFallingSpeed,
       });
 
   return stageDefinitions.map(mapDefinition);
