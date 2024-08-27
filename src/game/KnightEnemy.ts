@@ -137,7 +137,7 @@ export class KnightEnemy extends Character {
       } else if (
         isFirstHitboxToTheRight(playerHitbox, hitboxes.sword) &&
         (doYHitboxesOverlap(playerHitbox, hitboxes.sword) ||
-          playerHitbox.x + playerHitbox.w * 2 >
+          playerHitbox.x - playerHitbox.w * 2 >
             hitboxes.sword.x + hitboxes.sword.w)
       ) {
         this.facing = ">";
