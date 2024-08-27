@@ -3,6 +3,7 @@ import { BaseColors, colorVectors } from "../colors";
 import { SPRITE_SIZE_MULTIPLIER } from "../consts";
 import {
   doHitboxesOverlap,
+  doYHitboxesOverlap,
   isFirstHitboxToTheLeft,
   isFirstHitboxToTheRight,
 } from "../helpers/game/hitboxes";
@@ -126,10 +127,19 @@ export class KnightEnemy extends Character {
     ) {
       const walkingDistance = deltaTime * this._walkingSpeedMultiplier;
 
-      if (isFirstHitboxToTheLeft(playerHitbox, hitboxes.sword)) {
+      if (
+        isFirstHitboxToTheLeft(playerHitbox, hitboxes.sword) &&
+        (doYHitboxesOverlap(playerHitbox, hitboxes.sword) ||
+          playerHitbox.x + playerHitbox.w * 3 < hitboxes.sword.x)
+      ) {
         this.facing = "<";
         this.x -= walkingDistance;
-      } else if (isFirstHitboxToTheRight(playerHitbox, hitboxes.sword)) {
+      } else if (
+        isFirstHitboxToTheRight(playerHitbox, hitboxes.sword) &&
+        (doYHitboxesOverlap(playerHitbox, hitboxes.sword) ||
+          playerHitbox.x + playerHitbox.w * 2 >
+            hitboxes.sword.x + hitboxes.sword.w)
+      ) {
         this.facing = ">";
         this.x += walkingDistance;
       } else if (doHitboxesOverlap(playerHitbox, hitboxes.sword)) {

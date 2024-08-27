@@ -28,6 +28,16 @@ export function isFirstHitboxToTheRight(
   return h1TopLeft.x > h2BottomRight.x;
 }
 
+export function doYHitboxesOverlap(
+  h1: DimensionsAndCoordinates,
+  h2: DimensionsAndCoordinates
+) {
+  const { h1TopLeft, h1BottomRight, h2TopLeft, h2BottomRight } =
+    hitboxesToPoints(h1, h2);
+
+  return !(h1BottomRight.y < h2TopLeft.y || h2BottomRight.y < h1TopLeft.y);
+}
+
 export function doHitboxesOverlap(
   h1: DimensionsAndCoordinates,
   h2: DimensionsAndCoordinates
@@ -35,13 +45,10 @@ export function doHitboxesOverlap(
   const { h1TopLeft, h1BottomRight, h2TopLeft, h2BottomRight } =
     hitboxesToPoints(h1, h2);
 
-  if (
+  return !(
     h1BottomRight.x < h2TopLeft.x ||
     h2BottomRight.x < h1TopLeft.x ||
     h1BottomRight.y < h2TopLeft.y ||
     h2BottomRight.y < h1TopLeft.y
-  )
-    return false;
-
-  return true;
+  );
 }
