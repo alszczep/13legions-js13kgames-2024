@@ -365,7 +365,7 @@ export const stageDefinitions: ThirteenElements<StageDefinition> = [
     rockFallingSpeed: 0,
   },
   {
-    legionName: "Thirteenth Legion of Relentless ...",
+    legionName: "Thirteenth Legion of Hopeless Sailors",
     stageName: "Haven of Lost Hope",
     skyColor: colorKeys.s13,
     groundColor: colorKeys.g13,

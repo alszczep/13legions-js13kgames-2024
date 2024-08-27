@@ -37,7 +37,7 @@ export class StageManager {
     this._currentStageIndex++;
 
     if (this._stageDefinitions[this._currentStageIndex] === undefined) {
-      this._animateText("Victory", { keepShown: true });
+      this._animateText("The Great Sea Reached", { keepShown: true });
     } else {
       this.currentStage = this._stageDefinitions[this._currentStageIndex](
         startingPlayerPosition
