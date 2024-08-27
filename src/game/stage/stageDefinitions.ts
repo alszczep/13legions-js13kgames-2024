@@ -96,7 +96,7 @@ export const stageDefinitions: ThirteenElements<StageDefinition> = [
   },
   {
     legionName: "Fourth Legion of Dark Elves",
-    stageName: "Riverside Forest",
+    stageName: "Ever-growing Forest",
     skyColor: colorKeys.s4,
     groundColor: colorKeys.g4,
     enemyWalkingSpeedMultiplier: 0.23,
