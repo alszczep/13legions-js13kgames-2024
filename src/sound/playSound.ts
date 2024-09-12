@@ -9,8 +9,8 @@ export enum SoundEffect {
 }
 
 export function playSound(s: SoundEffect, positionX?: LeftRight) {
-  // return;
   ZZFX.positionX = positionX === "<" ? -1 : positionX === ">" ? 1 : 0;
+
   switch (s) {
     case SoundEffect.PlayerAttack:
       // prettier-ignore

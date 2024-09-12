@@ -1,24 +1,21 @@
 <!DOCTYPE html>
 <html>
+  <head>
+    <title>13legions</title>
+  </head>
   <body>
     <div id="a" class="f">
+      <img id="l" />
       <div id="z">
-        Controls:
-        <div id="y">
-          <p>W, ArrowUp, Space</p>
-          <p>Jump</p>
-          <p>A, ArrowLeft</p>
-          <p>Move left</p>
-          <p>D, ArrowRight</p>
-          <p>Move right</p>
-          <p>J</p>
-          <p>Attack (Red Sword)</p>
-          <p>K</p>
-          <p>Attack (Yellow Sword)</p>
-          <p>L</p>
-          <p>Attack (Blue Sword)</p>
-        </div>
+        You've been captured by the enemy and thrown into a prison deep in the
+        heart of an island. To reach the sea and escape, you must face 13
+        legions, each composed of 13 enemies. Enemies come in colors of red,
+        yellow, and blue. In order to defeat them, you will need to use a sword
+        with a matching color. Also, be mindful of the rocks falling from above.
+        Choose one of the four paths you want to take, your choice will
+        determine the difficulty of your journey.
       </div>
+      <hr />
       <div id="n">
         <div class="t n p">N</div>
         <div class="t w p">W</div>
@@ -67,6 +64,28 @@
           East - Hard
         </div>
       </div>
+      <hr />
+      <div id="z">
+        Controls:
+        <div id="y">
+          <p>W, ArrowUp, Space</p>
+          <p>Jump</p>
+          <p>A, ArrowLeft</p>
+          <p>Move left</p>
+          <p>D, ArrowRight</p>
+          <p>Move right</p>
+          <p>J</p>
+          <p>Attack (Red Sword)</p>
+          <p>K</p>
+          <p>Attack (Yellow Sword)</p>
+          <p>L</p>
+          <p>Attack (Blue Sword)</p>
+        </div>
+        <div id="i">
+          If needed, you can adjust the game's window size using browser zoom.
+          Also, the game has some sounds, so make sure to adjust the volume.
+        </div>
+      </div>
     </div>
     <div id="b" class="f">
       <div id="hp"></div>
@@ -80,6 +99,7 @@
       }
 
       * {
+        font-size: 16px;
         box-sizing: border-box;
         font-family: "Courier New", Courier, monospace;
         color: #fff;
@@ -109,7 +129,7 @@
       }
 
       #a {
-        padding-top: 60px;
+        padding-top: 20px;
       }
 
       #b {
@@ -141,7 +161,6 @@
       }
 
       #n {
-        padding-top: 40px;
         display: grid;
         grid-template-columns: 1fr 100px 40px 100px 1fr;
         grid-template-rows: 1fr 100px 40px 100px 1fr;
@@ -184,6 +203,25 @@
       }
       .p {
         cursor: pointer;
+      }
+      hr {
+        width: 450px;
+        border: 1px solid #ffffff28;
+        margin-top: 20px;
+        margin-bottom: 20px;
+      }
+      #i {
+        margin: 20px 0;
+        font-size: 12px;
+      }
+      #l {
+        width: 120px;
+        height: 120px;
+        padding-bottom: 20px;
+
+        image-rendering: pixelated;
+        image-rendering: -moz-crisp-edges;
+        image-rendering: crisp-edges;
       }
     </style>
   </body>

@@ -13,10 +13,8 @@ export function glCreateShader(
   }
 
   // TODO: comment before build
-  console.log(gl.getShaderInfoLog(shader));
+  // console.log(gl.getShaderInfoLog(shader));
 
   gl.deleteShader(shader);
-
-  // TODO: comment before build
-  throw new Error("Shader compile: " + type);
+  throw new Error("Shader compile error: " + type);
 }

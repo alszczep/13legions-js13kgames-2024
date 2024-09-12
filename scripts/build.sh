@@ -1,6 +1,12 @@
 #!/bin/bash
 
 DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+ROADROLLER_TIMEOUT=$1
+
+if [ -z "$ROADROLLER_TIMEOUT" ]; then
+    echo "Missing roadroller timeout argument"
+    exit 1
+fi
 
 cd $DIR/..
 
@@ -18,7 +24,7 @@ rm ./index.min.html
 
 cd ../scripts
 
-node ./config-roadroller.cjs 5
+node ./config-roadroller.cjs $ROADROLLER_TIMEOUT
 ROADROLLER_ARGS=$(./roadroller-args.sh)
 
 cd ../dist/assets

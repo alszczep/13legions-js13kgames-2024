@@ -16,14 +16,14 @@ export function combineVertexAttributeValues({
 }) {
   // TODO: comment before build
   // not a comprehensive validation, but will do for stupid mistakes
-  if (elementsPerVertex.length !== values.length) {
-    throw new Error("elementsPerVertex and values need to be of the same size");
-  }
-  elementsPerVertex.forEach((e, i) => {
-    if (values[i].length % e !== 0) {
-      throw new Error("elementsPerVertex value has to match values contents");
-    }
-  });
+  // if (elementsPerVertex.length !== values.length) {
+  //   throw new Error("elementsPerVertex and values need to be of the same size");
+  // }
+  // elementsPerVertex.forEach((e, i) => {
+  //   if (values[i].length % e !== 0) {
+  //     throw new Error("elementsPerVertex value has to match values contents");
+  //   }
+  // });
 
   let combined: number[] = [];
   for (

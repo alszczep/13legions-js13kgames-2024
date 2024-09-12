@@ -106,7 +106,7 @@ export async function gameView({ stageModifiers }: GameView) {
     lastFrameTime = frameTime;
 
     sm.currentStage.handleFrame(deltaTime, () => {
-      textTexture.updateText(`${sm.currentStage.legionName} Decimated`);
+      textTexture.updateText(`${sm.currentStage.legionName} Defeated`);
       textTexture.animate();
     });
 
