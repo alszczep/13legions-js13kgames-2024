@@ -1,8 +1,9 @@
 import { spriteSheetData } from "../../assets/spriteSheetData";
-import { BaseColors, Colors } from "../../colors";
+import { BaseColors, Colors, colorVectors } from "../../colors";
 import {
   STAGE_START_AND_END_TIME_OFFSET_IN_MS,
   TERRAIN_FLOOR_HEIGHT,
+  TOP_BAR_ANIMATION_TIME_IN_MS,
 } from "../../consts";
 import {
   randomBaseColor,
@@ -28,6 +29,7 @@ export type StageConstructor = {
   legionName: string;
   stageName: string;
   skyColor: Colors;
+  oldSkyColor: Colors;
   groundColor: Colors;
   enemyWalkingSpeedMultiplier: number;
   enemyAttackTimeInMs: number;
@@ -50,7 +52,13 @@ export class Stage {
   legionName: string;
   stageName: string;
 
-  skyColor: Colors;
+  currentSkyColor: Colors;
+  _oldSkyColor: Colors;
+  displayedSkyColor: [number, number, number];
+  _colorsDifference: [number, number, number];
+  _colorChangeTimeInMs = TOP_BAR_ANIMATION_TIME_IN_MS * 1.75;
+  _colorChangeTimeLeftInMs: number;
+
   terrain: Terrain;
 
   player: Player;
@@ -84,6 +92,7 @@ export class Stage {
     legionName,
     stageName,
     skyColor,
+    oldSkyColor,
     groundColor,
     enemyWalkingSpeedMultiplier,
     enemyAttackTimeInMs,
@@ -108,7 +117,16 @@ export class Stage {
     this._spawnedKnights = 0;
     this._timeUntilNextKnightSpawn = STAGE_START_AND_END_TIME_OFFSET_IN_MS;
 
-    this.skyColor = skyColor;
+    this.currentSkyColor = skyColor;
+    this._oldSkyColor = oldSkyColor;
+    this.displayedSkyColor = colorVectors[oldSkyColor];
+    this._colorsDifference = [
+      colorVectors[skyColor][0] - colorVectors[oldSkyColor][0],
+      colorVectors[skyColor][1] - colorVectors[oldSkyColor][1],
+      colorVectors[skyColor][2] - colorVectors[oldSkyColor][2],
+    ];
+    this._colorChangeTimeLeftInMs = this._colorChangeTimeInMs;
+
     this.terrain = new Terrain(groundColor, [
       {
         x: 0,
@@ -266,10 +284,27 @@ export class Stage {
     }
   }
 
+  _handleSkyColorChange(deltaTime: number) {
+    if (this._colorChangeTimeLeftInMs > 0) {
+      this._colorChangeTimeLeftInMs -= deltaTime;
+      this.displayedSkyColor = [
+        this.displayedSkyColor[0] +
+          this._colorsDifference[0] * (deltaTime / this._colorChangeTimeInMs),
+        this.displayedSkyColor[1] +
+          this._colorsDifference[1] * (deltaTime / this._colorChangeTimeInMs),
+        this.displayedSkyColor[2] +
+          this._colorsDifference[2] * (deltaTime / this._colorChangeTimeInMs),
+      ];
+    } else {
+      this.displayedSkyColor = colorVectors[this.currentSkyColor];
+    }
+  }
+
   handleFrame(deltaTime: number, animateStageEnd: () => void) {
     this._handleCharactersFrames(deltaTime);
     this._handleKnightsSpawn(deltaTime);
     this._handleRocksSpawn(deltaTime);
     this._handleNextLevelCooldown(deltaTime, animateStageEnd);
+    this._handleSkyColorChange(deltaTime);
   }
 }

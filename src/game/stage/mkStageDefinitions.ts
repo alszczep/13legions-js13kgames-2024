@@ -1,3 +1,4 @@
+import { Colors } from "../../colors";
 import { Coordinates, Dimensions } from "../../types/DimensionsAndCoordinates";
 import type {
   StageDefinition,
@@ -19,11 +20,13 @@ export const mkStageDefinitions = (
   };
 
   const mapDefinition =
-    (definition: StageDefinition) => (startingPlayerPosition: Coordinates) =>
+    (definition: StageDefinition) =>
+    (startingPlayerPosition: Coordinates, oldSkyColor: Colors) =>
       new Stage({
         ...baseArgs,
         ...definition,
         startingPlayerPosition,
+        oldSkyColor,
         enemyWalkingSpeedMultiplier:
           definition.enemyWalkingSpeedMultiplier *
           stageModifiers.enemyWalkingSpeedMultiplier,

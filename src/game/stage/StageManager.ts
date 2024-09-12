@@ -1,3 +1,4 @@
+import { colorKeys } from "../../colors";
 import { TERRAIN_FLOOR_HEIGHT } from "../../consts";
 import { Coordinates, Dimensions } from "../../types/DimensionsAndCoordinates";
 import { StageModifiers } from "../../types/GameDifficulty";
@@ -24,10 +25,13 @@ export class StageManager {
     );
     this._currentStageIndex = 0;
 
-    this.currentStage = this._stageDefinitions[this._currentStageIndex]({
-      x: canvasSize.w / 2,
-      y: canvasSize.h - TERRAIN_FLOOR_HEIGHT,
-    });
+    this.currentStage = this._stageDefinitions[this._currentStageIndex](
+      {
+        x: canvasSize.w / 2,
+        y: canvasSize.h - TERRAIN_FLOOR_HEIGHT,
+      },
+      colorKeys.s1
+    );
 
     this._animateText = animateText;
     this._animateText(this.currentStage.stageName);
@@ -40,7 +44,8 @@ export class StageManager {
       this._animateText("The Seashore Reached", { keepShown: true });
     } else {
       this.currentStage = this._stageDefinitions[this._currentStageIndex](
-        startingPlayerPosition
+        startingPlayerPosition,
+        this.currentStage.currentSkyColor
       );
       this._animateText(this.currentStage.stageName);
     }

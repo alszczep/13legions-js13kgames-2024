@@ -1,7 +1,6 @@
 import { loadSpriteSheet } from "../assets/loadSpriteSheet";
 import { getGl } from "../helpers/rendering/getGl";
 import { glCreateTexture } from "../helpers/rendering/gl/glCreateTexture";
-import { colorVectors } from "../colors";
 import { TerrainProgram } from "../programs/TerrainProgram";
 import { CharacterProgram } from "../programs/CharacterProgram";
 import { StageManager } from "../game/stage/StageManager";
@@ -120,7 +119,7 @@ export async function gameView({ stageModifiers }: GameView) {
       y: 0,
       w: sm.currentStage.canvasSize.w,
       h: sm.currentStage.canvasSize.h,
-      color: colorVectors[sm.currentStage.skyColor],
+      color: sm.currentStage.displayedSkyColor,
       isSky: true,
     });
 

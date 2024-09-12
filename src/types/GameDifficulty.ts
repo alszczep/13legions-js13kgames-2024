@@ -2,7 +2,7 @@ import { type StageConstructor } from "../game/stage/Stage";
 
 export type StageDefinition = Omit<
   StageConstructor,
-  "canvasSize" | "loadNextStage" | "startingPlayerPosition"
+  "canvasSize" | "loadNextStage" | "startingPlayerPosition" | "oldSkyColor"
 >;
 export type StageModifiers = Pick<
   StageDefinition,
